@@ -1,0 +1,39 @@
+.game {
+  position: relative;
+}
+
+.game .countdown {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.stone {
+  border: 1px solid #eee;
+  border-radius: 4px;
+  box-shadow: 2px 2px 4px #b8b8b8;
+  width: 128px;
+  height: 128px;
+  margin: 12px;
+}
+
+.stone img {
+  padding: 24px;
+}
+
+.stone.hidden,
+.stone img.hidden {
+  visibility: hidden;
+}
+
+.backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+}
+

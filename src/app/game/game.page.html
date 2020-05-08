@@ -1,0 +1,18 @@
+<ion-content>
+  <div class="ion-padding">
+    <div *ngIf="showTimer" class="ion-float-end">{{timer}}</div>
+  </div>
+    <div class="game" *ngIf="showGame">
+        <ion-grid>
+            <ion-row>
+                <ion-col [size]="colSize" *ngFor="let stone of stones">
+                    <div [ngClass]="{'hidden': stone.hasBeenFound}" class="stone" (click)="onStoneClick(stone)">
+                        <img [ngClass]="{'hidden': !stone.showFront}" [src]="stone.icon">
+                    </div>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+        <div class="countdown" *ngIf="showCountdown">{{counter}}</div>
+    </div>
+    <div #backdrop class="backdrop" *ngIf="showBackdrop" (click)="backdropClickFn()"></div>
+</ion-content>

@@ -1,0 +1,21 @@
+version: '2.2'
+services:
+  main:
+    image: ionic-base:latest
+    container_name: memo
+    ports:
+      - 8100:8100
+      - 8200:8200
+      - 35729:35729
+      - 53703:53703
+      - 53704:53704
+      - 5037:5037
+    volumes:
+      - ~/.bashrc:/root/.bashrc
+      - .:/app
+      - ~/.gradle:/root/.gradle
+    working_dir: /app
+    command: ionic serve --address=0.0.0.0
+
+
+
