@@ -18,9 +18,6 @@ interface Stone {
 })
 export class GamePage implements OnInit {
 
-    @ViewChild('backdrop', {static: false}) backdrop: any;
-
-
     setSize: number = 2;
     sets: number = 6;
     icons: string[];

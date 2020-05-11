@@ -3,8 +3,11 @@ image_name=memo
 build:
 	docker build -t ${image_name}:latest .
 
-run:
-	docker-compose up -d ${image_name}
+serve:
+	docker run --rm -it \
+    	-v $$(pwd):/app \
+    	${image_name} \
+    	ionic serve --address=0.0.0.0
 
 bash:
 	docker run --rm -it \
