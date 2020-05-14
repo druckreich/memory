@@ -1,28 +1,21 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {ModalController} from "@ionic/angular";
+import {ActivatedRoute} from "@angular/router";
+import {GAME_MODES, GameMode, Stone} from "../state/main.models";
 
-interface Stone {
-    id?: string;
-    setId?: string;
-    setSize: number;
-    icon?: string;
-    showFront?: boolean;
-    hasBeenFound?: boolean;
-}
 
 @Component({
-    selector: 'app-game',
+    selector: 'memo-game',
     templateUrl: './game.page.html',
     styleUrls: ['./game.page.scss'],
 })
 export class GamePage implements OnInit {
 
-    setSize: number = 2;
-    sets: number = 6;
-    icons: string[];
+    gameMode: GameMode;
 
+    icons: string[];
     stones: Stone[];
+
     colSize: number = 4;
 
     backdropClickFn: Function = () => {
@@ -39,10 +32,14 @@ export class GamePage implements OnInit {
     timer: string = "";
     timeoutHandler: any;
 
-    constructor(public modalController: ModalController, public http: HttpClient) {
+    constructor(public activatedRoute: ActivatedRoute, public http: HttpClient) {
+
     }
 
     ngOnInit() {
+        const gameId: string = this.activatedRoute.snapshot.params.id;
+        this.gameMode = GAME_MODES.find((gameMode: GameMode) => gameMode.id == gameId);
+
         this.showBackdrop = true;
         this.showCountdown = false;
         this.counter = "";
@@ -54,9 +51,9 @@ export class GamePage implements OnInit {
 
     createGame(): void {
         let stones: Stone[] = [];
-        let uniqueSets: string[] = this.getRandomElementsFromArray(this.icons, this.sets);
+        let uniqueSets: string[] = this.getRandomElementsFromArray(this.icons, this.gameMode.setNumber);
         for (let i = 0; i < uniqueSets.length; i++) {
-            stones = stones.concat(this.createSet(this.setSize, uniqueSets[i]));
+            stones = stones.concat(this.createSet(this.gameMode.setSize, uniqueSets[i]));
         }
         this.stones = stones.sort(() => Math.random() - 0.5);
         this.startCountdown();
@@ -69,7 +66,7 @@ export class GamePage implements OnInit {
             set.push({
                 id: `${icon}_${i}`,
                 setId: icon,
-                setSize: this.setSize,
+                setSize: setSize,
                 icon: icon,
                 showFront: false,
                 hasBeenFound: false
@@ -134,10 +131,10 @@ export class GamePage implements OnInit {
         }
 
         // valid
-        if (setIds.length === 1 && stonesWithFrontShown.length == this.setSize) {
+        if (setIds.length === 1 && stonesWithFrontShown.length == stone.setSize) {
             this.showBackdrop = true;
             let notFoundStones: Stone[] = this.stones.filter((stone: Stone) => stone.showFront === false);
-            if(notFoundStones.length > 0) {
+            if (notFoundStones.length > 0) {
                 this.backdropClickFn = () => {
                     stonesWithFrontShown.forEach((stone: Stone) => stone.hasBeenFound = true);
                     this.showBackdrop = false;
@@ -147,9 +144,7 @@ export class GamePage implements OnInit {
             } else {
                 clearInterval(this.timeoutHandler);
             }
-
             return;
-
         }
     }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-countdown',
+  selector: 'memo-countdown',
   templateUrl: './countdown.component.html',
   styleUrls: ['./countdown.component.scss'],
 })

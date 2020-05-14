@@ -1,9 +1,10 @@
 import {Component} from '@angular/core';
-import {Store} from "@ngxs/store";
-import {GameMode} from "../state/main.state";
+import {Select, Store} from "@ngxs/store";
+
 import {Observable} from "rxjs";
 import {Navigate} from "@ngxs/router-plugin";
-import {UpdateHighscore} from "../state/main.actions";
+import {GameMode, GameModeWithHighscore} from "../state/main.models";
+import {MainState} from "../state/main.state";
 
 @Component({
     selector: 'app-home',
@@ -12,14 +13,13 @@ import {UpdateHighscore} from "../state/main.actions";
 })
 export class HomePage {
 
-    games$: Observable<GameMode[]> = this.store.select(s => s.main.games);
+    @Select(MainState.gamesWithHighscore)
+    games$: Observable<GameModeWithHighscore[]>;
 
     constructor(public store: Store) {
     }
 
-    startGame(game: GameMode) {
-        this.store.dispatch(new UpdateHighscore(game, 10));
-        //this.store.dispatch(new Navigate(['/game', game.id]));
+    onClick(game: GameMode) {
+        this.store.dispatch(new Navigate(['/game', game.id]));
     }
-
 }

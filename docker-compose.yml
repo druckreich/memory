@@ -1,6 +1,6 @@
 version: '2.2'
 services:
-  main:
+  memory:
     image: ionic-base:latest
     container_name: memo
     ports:
