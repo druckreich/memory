@@ -132,12 +132,12 @@ export class GamePage implements OnInit {
 
         // valid
         if (setIds.length === 1 && stonesWithFrontShown.length == stone.setSize) {
-            this.showBackdrop = true;
+            //this.showBackdrop = true;
             let notFoundStones: Stone[] = this.stones.filter((stone: Stone) => stone.showFront === false);
             if (notFoundStones.length > 0) {
                 this.backdropClickFn = () => {
                     stonesWithFrontShown.forEach((stone: Stone) => stone.hasBeenFound = true);
-                    this.showBackdrop = false;
+                    //this.showBackdrop = false;
                     this.backdropClickFn = () => {
                     };
                 };

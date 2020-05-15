@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {GameMode} from "../../state/main.models";
+import {GameMode, GameModeWithHighscore} from "../../state/main.models";
 import {Store} from "@ngxs/store";
 
 @Component({
@@ -10,7 +10,7 @@ import {Store} from "@ngxs/store";
 export class GameButtonComponent {
 
     @Input()
-    game: GameMode;
+    game: GameModeWithHighscore;
 
     @Output()
     click: EventEmitter<GameMode> = new EventEmitter<GameMode>();

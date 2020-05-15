@@ -8,7 +8,7 @@ import {GamePageRoutingModule} from './game-routing.module';
 
 import {GamePage} from './game.page';
 import {HttpClientModule} from "@angular/common/http";
-import {CountdownComponent} from "./countdown/countdown.component";
+
 
 @NgModule({
     imports: [
@@ -19,8 +19,8 @@ import {CountdownComponent} from "./countdown/countdown.component";
         GamePageRoutingModule,
 
     ],
-    entryComponents: [CountdownComponent],
-    declarations: [GamePage, CountdownComponent]
+    entryComponents: [],
+    declarations: [GamePage]
 })
 export class GamePageModule {
 }
