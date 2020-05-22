@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
 import {ActivatedRoute} from "@angular/router";
 import {GAME_MODES, GameMode, Stone} from "../state/main.models";
+import {GameService} from "../state/game.service";
+import {GAME_TIMER_STATUS} from "./game-timer/game-timer.component";
 
 
 @Component({
@@ -11,102 +12,44 @@ import {GAME_MODES, GameMode, Stone} from "../state/main.models";
 })
 export class GamePage implements OnInit {
 
-    gameMode: GameMode;
-
-    icons: string[];
     stones: Stone[];
-
-    colSize: number = 4;
 
     backdropClickFn: Function = () => {
     };
 
     showGame: boolean = false;
     showBackdrop: boolean = false;
+
     showCountdown: boolean = false;
-    counter: string = "";
-    countdownHandler: any;
+    timerStatus: GAME_TIMER_STATUS;
 
-    showTimer: boolean = false;
-    miliseconds: number;
-    timer: string = "";
-    timeoutHandler: any;
-
-    constructor(public activatedRoute: ActivatedRoute, public http: HttpClient) {
-
+    constructor(public activatedRoute: ActivatedRoute, public gameService: GameService) {
     }
 
     ngOnInit() {
         const gameId: string = this.activatedRoute.snapshot.params.id;
-        this.gameMode = GAME_MODES.find((gameMode: GameMode) => gameMode.id == gameId);
+        const gameMode = GAME_MODES.find((gameMode: GameMode) => gameMode.id == gameId);
 
-        this.showBackdrop = true;
-        this.showCountdown = false;
-        this.counter = "";
-        this.http.get('assets/icons.json').subscribe((icons: string[]) => {
-            this.icons = icons;
-            this.createGame();
+        this.gameService.createStones(gameMode).subscribe((stones: Stone[]) => {
+            this.stones = stones;
+            this.startCountdown();
         });
-    }
-
-    createGame(): void {
-        let stones: Stone[] = [];
-        let uniqueSets: string[] = this.getRandomElementsFromArray(this.icons, this.gameMode.setNumber);
-        for (let i = 0; i < uniqueSets.length; i++) {
-            stones = stones.concat(this.createSet(this.gameMode.setSize, uniqueSets[i]));
-        }
-        this.stones = stones.sort(() => Math.random() - 0.5);
-        this.startCountdown();
-    }
-
-
-    createSet(setSize: number, icon: string): Stone[] {
-        let set: Stone[] = [];
-        for (let i = 0; i < setSize; i++) {
-            set.push({
-                id: `${icon}_${i}`,
-                setId: icon,
-                setSize: setSize,
-                icon: icon,
-                showFront: false,
-                hasBeenFound: false
-            })
-        }
-        return set;
     }
 
     startCountdown(): void {
         this.showGame = true;
         this.showBackdrop = true;
         this.showCountdown = true;
-        this.counter = "3";
-        this.showTimer = true;
-        this.timer = "00:00:00";
-
-        let countdown: number = 3;
-        this.countdownHandler = setInterval((counter) => {
-            countdown--;
-            this.counter = countdown.toString();
-            if (countdown == 0) {
-                this.counter = "Go";
-            }
-            if (countdown < 0) {
-                clearInterval(this.countdownHandler);
-                this.startGame();
-            }
-        }, 750)
     }
 
     startGame(): void {
         this.showBackdrop = false;
         this.showCountdown = false;
-        this.miliseconds = 0;
-        this.timeoutHandler = setInterval(() => {
-            this.miliseconds += 10;
-            let seconds: number = Math.floor(this.miliseconds / 1000);
-            let miliseconds: number = Math.floor((this.miliseconds % 1000) / 10);
-            this.timer = `${seconds}.${miliseconds}`;
-        }, 10);
+        this.timerStatus = GAME_TIMER_STATUS.START;
+    }
+
+    onTick() {
+
     }
 
     onStoneClick(stone: Stone): void {
@@ -142,23 +85,9 @@ export class GamePage implements OnInit {
                     };
                 };
             } else {
-                clearInterval(this.timeoutHandler);
+                this.timerStatus = GAME_TIMER_STATUS.RUN;
             }
             return;
         }
-    }
-
-    getRandomElementsFromArray(arr, n) {
-        let result = new Array(n),
-            len = arr.length,
-            taken = new Array(len);
-        if (n > len)
-            throw new RangeError("getRandom: more elements taken than available");
-        while (n--) {
-            var x = Math.floor(Math.random() * len);
-            result[n] = arr[x in taken ? taken[x] : x];
-            taken[x] = --len in taken ? taken[len] : len;
-        }
-        return result;
     }
 }

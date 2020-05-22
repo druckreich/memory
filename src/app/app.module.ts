@@ -13,12 +13,14 @@ import {MainState} from "./state/main.state";
 import {environment} from "../environments/environment";
 import {NgxsRouterPluginModule} from "@ngxs/router-plugin";
 import {NgxsStoragePluginModule} from "@ngxs/storage-plugin";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
     declarations: [AppComponent],
     entryComponents: [],
     imports: [
         BrowserModule,
+        HttpClientModule,
         IonicModule.forRoot(),
         AppRoutingModule,
         NgxsModule.forRoot([MainState], {
