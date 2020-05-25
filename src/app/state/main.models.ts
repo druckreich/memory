@@ -3,8 +3,12 @@ export interface Stone {
     setId?: string;
     setSize: number;
     icon?: string;
-    showFront?: boolean;
-    hasBeenFound?: boolean;
+    state?: 'flipped'|'unflipped'|'found';
+
+    /**
+     * is in the game and can be clicked
+     */
+    isValid: boolean;
 }
 
 export interface GameModeWithHighscore extends GameMode {

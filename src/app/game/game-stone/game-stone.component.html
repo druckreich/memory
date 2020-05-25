@@ -1,0 +1,13 @@
+<div class="container">
+    <div [@flip]="stone.state"
+         (@flip.start)="onAnimationEvent($event)"
+         (@flip.done)="onAnimationEvent($event)"
+         class="flipper"
+         (click)="onStoneClicked()">
+        <div class="sides front">
+            <img [src]="stone.icon">
+        </div>
+        <div class="sides back">
+        </div>
+    </div>
+</div>

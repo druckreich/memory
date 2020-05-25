@@ -20,7 +20,8 @@ export class GameService {
                 for (let i = 0; i < uniqueSets.length; i++) {
                     stones = stones.concat(this.createSet(gameMode.setSize, uniqueSets[i]));
                 }
-                return stones.sort(() => Math.random() - 0.5);
+                //return stones.sort(() => Math.random() - 0.5);
+                return stones;
             }));
     }
 
@@ -32,8 +33,8 @@ export class GameService {
                 setId: icon,
                 setSize: setSize,
                 icon: icon,
-                showFront: false,
-                hasBeenFound: false
+                state: 'flipped',
+                isValid: true
             })
         }
         return set;

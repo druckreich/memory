@@ -39,13 +39,13 @@ export class GameTimerComponent implements OnInit, OnChanges {
                     break;
             }
         }
-
     }
 
     startTimer() {
         if (this.handler == null) {
             this.handler = setInterval(() => {
                 this.ms += 10;
+                this.tick.emit(this.ms);
                 this.updateLabel(this.ms);
             }, 10)
         }

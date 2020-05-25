@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {GAME_MODES, GameMode, Stone} from "../state/main.models";
-import {GameService} from "../state/game.service";
+import {GAME_MODES, GameMode, Stone} from "@state/main.models";
+import {GameService} from "@state/game.service";
 import {GAME_TIMER_STATUS} from "./game-timer/game-timer.component";
-
+import {Store} from "@ngxs/store";
 
 @Component({
     selector: 'memo-game',
@@ -14,23 +14,23 @@ export class GamePage implements OnInit {
 
     stones: Stone[];
 
-    backdropClickFn: Function = () => {
-    };
-
+    gameMode: GameMode;
     showGame: boolean = false;
+    disableStones: boolean = false;
     showBackdrop: boolean = false;
-
     showCountdown: boolean = false;
-    timerStatus: GAME_TIMER_STATUS;
+    timerStatus: GAME_TIMER_STATUS = GAME_TIMER_STATUS.STOP;
 
-    constructor(public activatedRoute: ActivatedRoute, public gameService: GameService) {
+    unflippedStones: Stone[] = [];
+
+    constructor(public store: Store, public activatedRoute: ActivatedRoute, public gameService: GameService) {
     }
 
     ngOnInit() {
         const gameId: string = this.activatedRoute.snapshot.params.id;
-        const gameMode = GAME_MODES.find((gameMode: GameMode) => gameMode.id == gameId);
+        this.gameMode = GAME_MODES.find((gameMode: GameMode) => gameMode.id == gameId);
 
-        this.gameService.createStones(gameMode).subscribe((stones: Stone[]) => {
+        this.gameService.createStones(this.gameMode).subscribe((stones: Stone[]) => {
             this.stones = stones;
             this.startCountdown();
         });
@@ -44,50 +44,66 @@ export class GamePage implements OnInit {
 
     startGame(): void {
         this.showBackdrop = false;
+        this.disableStones = false;
         this.showCountdown = false;
         this.timerStatus = GAME_TIMER_STATUS.START;
     }
 
-    onTick() {
+    stopGame(): void {
+        this.showBackdrop = true;
+        this.disableStones = true;
+        this.showCountdown = false;
+        this.timerStatus = GAME_TIMER_STATUS.STOP;
+    }
+
+    onTick(ms: number) {
+    }
+
+    onStoneClicked(stone: Stone): void {
+        this.unflippedStones.push(stone);
+        let unflippedStones: Stone[] = this.stones.filter((stone: Stone) => stone.isValid && stone.state === 'unflipped');
+        if(unflippedStones.length == this.gameMode.setSize) {
+            this.disableStones = true;
+        }
+    }
+
+    onStoneFound(stone: Stone): void {
+        let unfoundStones: Stone[] = this.stones.filter((stone: Stone) => stone.isValid === true);
+        if(unfoundStones.length == 0) {
+            this.stopGame();
+        }
+    }
+
+    onStoneFlipped(stone: Stone): void {
 
     }
 
-    onStoneClick(stone: Stone): void {
-        if (stone.showFront == true) {
-            return;
-        }
-        stone.showFront = true;
-
-        let stonesWithFrontShown: Stone[] = this.stones.filter((stone: Stone) => stone.showFront === true && stone.hasBeenFound === false);
-        const setIds: string[] = stonesWithFrontShown.map((stone: Stone) => stone.setId).filter((value, index, self) => self.indexOf(value) === index);
-
-        // invalid
-        if (setIds.length > 1 && stonesWithFrontShown.length > 1) {
-            this.showBackdrop = true;
-            this.backdropClickFn = () => {
-                stonesWithFrontShown.forEach((stone: Stone) => stone.showFront = false);
-                this.showBackdrop = false;
-                this.backdropClickFn = () => {
-                };
-            };
+    onStoneUnflipped(stone: Stone): void {
+        let unflippedStones: Stone[] = this.stones.filter((stone: Stone) => stone.isValid && stone.state === 'unflipped');
+        if(unflippedStones.length < this.gameMode.setSize) {
             return;
         }
 
-        // valid
-        if (setIds.length === 1 && stonesWithFrontShown.length == stone.setSize) {
-            //this.showBackdrop = true;
-            let notFoundStones: Stone[] = this.stones.filter((stone: Stone) => stone.showFront === false);
-            if (notFoundStones.length > 0) {
-                this.backdropClickFn = () => {
-                    stonesWithFrontShown.forEach((stone: Stone) => stone.hasBeenFound = true);
-                    //this.showBackdrop = false;
-                    this.backdropClickFn = () => {
-                    };
-                };
-            } else {
-                this.timerStatus = GAME_TIMER_STATUS.RUN;
-            }
+        const setIds: string[] = unflippedStones
+            .map((stone: Stone) => stone.setId)
+            .filter((value, index, self) => self.indexOf(value) === index);
+
+        // the stones are invalid - flip it back
+        if (setIds.length > 1) {
+            setTimeout(() => {
+                unflippedStones.forEach((stone: Stone) => stone.state = 'flipped');
+                this.disableStones = false;
+            }, 400);
             return;
+        }
+
+        // the stones are valid - remove them from the board
+        if (setIds.length === 1 && unflippedStones.length == stone.setSize) {
+            unflippedStones.forEach((stone: Stone) => stone.isValid = false);
+            this.disableStones = false;
+            setTimeout(() => {
+                unflippedStones.forEach((stone: Stone) => stone.state = 'found');
+            }, 400);
         }
     }
 }
