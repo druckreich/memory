@@ -15,7 +15,7 @@ export class GamePage implements OnInit {
     stones: Stone[];
 
     gameMode: GameMode;
-    showGame: boolean = false;
+    showStones: boolean = false;
     disableStones: boolean = false;
     showBackdrop: boolean = false;
     showCountdown: boolean = false;
@@ -36,8 +36,16 @@ export class GamePage implements OnInit {
         });
     }
 
+    gameModeRows(): number[] {
+        return Array(this.gameMode.rows).fill(0).map((x,i)=>i)
+    }
+
+    gameModeCols(): number[] {
+        return Array(this.gameMode.cols).fill(0).map((x,i)=>i)
+    }
+
     startCountdown(): void {
-        this.showGame = true;
+        this.showStones = true;
         this.showBackdrop = true;
         this.showCountdown = true;
     }
@@ -61,7 +69,6 @@ export class GamePage implements OnInit {
 
     onStoneClicked(stone: Stone): void {
         this.unflippedStones.push(stone);
-        //let unflippedStones: Stone[] = this.stones.filter((stone: Stone) => stone.isValid && stone.state === 'unflipped');
         if(this.unflippedStones.length == this.gameMode.setSize) {
             this.disableStones = true;
         }
@@ -106,7 +113,6 @@ export class GamePage implements OnInit {
             this.disableStones = false;
             setTimeout(() => {
                 stones.forEach((stone: Stone) => stone.state = StoneState.found);
-
             }, 400);
         }
     }

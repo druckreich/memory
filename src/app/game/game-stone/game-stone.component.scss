@@ -1,15 +1,12 @@
 .container {
   perspective: 1000px;
   transform-style: preserve-3d;
-  width: 128px;
-  height: 128px;
 }
 
 .flipper {
   position: relative;
   width: 128px;
   height: 128px;
-  margin: 3rem auto;
   transform-style: preserve-3d;
 }
 
@@ -42,4 +39,11 @@
   border: solid 2px #eee;
   transform: rotateY(180deg);
   border-radius: 12px;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
 }

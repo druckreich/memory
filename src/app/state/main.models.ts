@@ -21,6 +21,8 @@ export interface GameMode {
     id: string;
     setNumber: number;
     setSize: number;
+    cols: number;
+    rows: number;
 }
 
 export interface Highscore {
@@ -29,7 +31,7 @@ export interface Highscore {
 }
 
 export const GAME_MODES: GameMode[] = [
-    {id: 'normal_small', setNumber: 6, setSize: 2},
-    {id: 'normal_medium', setNumber: 8, setSize: 2},
-    {id: 'normal_large', setNumber: 10, setSize: 2}
+    {id: 'normal_small', setNumber: 6, setSize: 2, cols: 3, rows: 4},
+    {id: 'normal_medium', setNumber: 8, setSize: 2, cols: 4, rows: 4},
+    {id: 'normal_large', setNumber: 10, setSize: 2, cols: 4, rows: 5}
 ];

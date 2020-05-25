@@ -4,12 +4,12 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content>
-    <div class="game" *ngIf="showGame">
+<ion-content class="ion-padding">
+    <div class="game" *ngIf="showStones">
         <ion-grid>
-            <ion-row>
-                <ion-col *ngFor="let stone of stones">
-                    <memo-game-stone [stone]="stone"
+            <ion-row *ngFor="let row of gameModeRows(); let ri = index">
+                <ion-col *ngFor="let col of gameModeCols(); let ci = index">
+                    <memo-game-stone [stone]="stones[(ri * gameMode.cols) + ci]"
                                      [disabled]="disableStones"
                                      (clicked)="onStoneClicked($event)"
                                      (flipped)="onStoneFlipped($event)"
