@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {GameMode, Stone} from "./main.models";
+import {GameMode, Stone, StoneState} from "./main.models";
 import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
 
@@ -33,8 +33,8 @@ export class GameService {
                 setId: icon,
                 setSize: setSize,
                 icon: icon,
-                state: 'flipped',
-                isValid: true
+                state: StoneState.flipped,
+                disabled: false
             })
         }
         return set;

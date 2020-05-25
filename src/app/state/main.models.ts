@@ -1,14 +1,16 @@
+export enum StoneState {
+    flipped = 'flipped',
+    unflipped = 'unflipped',
+    found = 'found'
+}
+
 export interface Stone {
     id?: string;
     setId?: string;
     setSize: number;
     icon?: string;
-    state?: 'flipped'|'unflipped'|'found';
-
-    /**
-     * is in the game and can be clicked
-     */
-    isValid: boolean;
+    state?: StoneState;
+    disabled: boolean;
 }
 
 export interface GameModeWithHighscore extends GameMode {

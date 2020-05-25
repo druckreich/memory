@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Stone} from '@state/main.models';
+import {Stone, StoneState} from '@state/main.models';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
@@ -43,7 +43,7 @@ export class GameStoneComponent implements OnInit {
     }
 
     onToggleFlip() {
-        this.stone.state = (this.stone.state === 'unflipped') ? 'flipped' : 'unflipped';
+        this.stone.state = (this.stone.state === StoneState.unflipped) ? StoneState.flipped : StoneState.unflipped;
     }
 
     onAnimationEvent($event) {
@@ -61,8 +61,8 @@ export class GameStoneComponent implements OnInit {
     }
 
     onStoneClicked() {
-        if (this.disabled == false) {
-            if (this.stone.state === 'flipped') {
+        if (this.disabled === false && this.stone.disabled === false) {
+            if (this.stone.state === StoneState.flipped) {
                 this.onToggleFlip();
             }
             this.clicked.emit(this.stone);
