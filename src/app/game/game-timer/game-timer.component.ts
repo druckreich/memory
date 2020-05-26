@@ -1,7 +1,7 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 
 export const enum GAME_TIMER_STATUS {
-    START, STOP, PAUSE
+    START, STOP, RESET
 }
 
 @Component({
@@ -9,11 +9,11 @@ export const enum GAME_TIMER_STATUS {
     templateUrl: './game-timer.component.html',
     styleUrls: ['./game-timer.component.scss'],
 })
-export class GameTimerComponent implements OnInit, OnChanges {
+export class GameTimerComponent implements OnInit, OnChanges, OnDestroy {
 
-    handler: any = null;
-    label: string;
-    ms: number = 0;
+    counter: number;
+    timerRef;
+    running = false;
 
     @Input()
     status: GAME_TIMER_STATUS = GAME_TIMER_STATUS.STOP;
@@ -25,42 +25,50 @@ export class GameTimerComponent implements OnInit, OnChanges {
     }
 
     ngOnInit() {
-        this.updateLabel(this.ms);
+
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['status']) {
-            switch (changes['status'].currentValue) {
+        if (changes.status) {
+            switch (changes.status.currentValue) {
                 case GAME_TIMER_STATUS.STOP:
-                    this.stopTimer();
+                    this.stop();
                     break;
                 case GAME_TIMER_STATUS.START:
-                    this.startTimer();
+                    this.start();
+                    break;
+                case GAME_TIMER_STATUS.RESET:
+                    this.reset();
                     break;
             }
         }
     }
 
-    startTimer() {
-        if (this.handler == null) {
-            this.handler = setInterval(() => {
-                this.ms += 10;
-                this.tick.emit(this.ms);
-                this.updateLabel(this.ms);
-            }, 10)
+    start() {
+        if (!this.running) {
+            const startTime = Date.now() - (this.counter || 0);
+            this.timerRef = setInterval(() => {
+                this.counter = Date.now() - startTime;
+                this.tick.emit(this.counter);
+            }, 50);
         }
     }
 
-    stopTimer() {
-        if (this.handler) {
-            clearInterval(this.handler);
-        }
+    stop() {
+        clearInterval(this.timerRef);
+        this.running = false;
     }
 
-    updateLabel(ms: number) {
-        let seconds: number = Math.floor(this.ms / 1000);
-        let miliseconds: number = Math.floor((this.ms % 1000) / 10);
-        this.label = `${seconds}.${miliseconds}`;
+    reset() {
+        clearInterval(this.timerRef);
+        this.running = false;
+        this.counter = 0;
     }
 
+    clearTimer() {
+    }
+
+    ngOnDestroy() {
+        clearInterval(this.timerRef);
+    }
 }

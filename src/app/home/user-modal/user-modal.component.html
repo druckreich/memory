@@ -1,0 +1,12 @@
+<ion-content>
+<div class="ion-padding">
+    <p>By which name are you known?</p>
+    <ion-item>
+        <ion-input #username placeholder="name"></ion-input>
+    </ion-item>
+</div>
+<div class="ion-padding">
+    <ion-button expand="block" fill="solid" (click)="onSetUsername(username.value)">Send</ion-button>
+</div>
+</ion-content>
+

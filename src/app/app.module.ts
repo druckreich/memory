@@ -19,10 +19,13 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireDatabaseModule} from '@angular/fire/database';
+import {SharedModule} from '@app/shared.module';
 
 
 @NgModule({
-    declarations: [AppComponent],
+    declarations: [
+        AppComponent
+    ],
     entryComponents: [],
     imports: [
         BrowserAnimationsModule,
@@ -42,7 +45,9 @@ import {AngularFireDatabaseModule} from '@angular/fire/database';
         NgxsStoragePluginModule.forRoot({
             key: [MainState]
         }),
-        NgxsRouterPluginModule.forRoot()
+        NgxsRouterPluginModule.forRoot(),
+
+        SharedModule
     ],
     providers: [
         StatusBar,
@@ -52,6 +57,7 @@ import {AngularFireDatabaseModule} from '@angular/fire/database';
         AngularFirestore,
         {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
     ],
+    exports: [],
     bootstrap: [AppComponent]
 })
 export class AppModule {

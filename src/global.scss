@@ -24,3 +24,17 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+ion-modal.highscore .modal-wrapper {
+  width: 90%;
+  height: 90%;
+  border: 1px solid #eee;
+  border-radius: 12px;
+}
+
+ion-modal.user .modal-wrapper {
+  width: 400px;
+  height: 210px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+}

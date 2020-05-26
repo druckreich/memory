@@ -1,0 +1,45 @@
+<div class="ion-padding-horizontal">
+    <h3>{{gameMode.label}}</h3>
+    <ion-grid *ngIf="remoteHighscores$ | async as remoteHighscores">
+        <ion-row>
+            <ion-col size="1" class="ion-text-nowrap">RANK</ion-col>
+            <ion-col size="4" class="ion-text-right">TIME</ion-col>
+            <ion-col size="6" class="ion-text-right">NAME</ion-col>
+        </ion-row>
+        <ion-row *ngFor="let remoteHighscore of remoteHighscores; let i = index">
+            <ion-col size="1" class="ion-text-right ion-text-nowrap">
+                <ion-text [color]="remoteHighscore.id === highscore.id ? 'success': ''">{{i + 1}}.</ion-text>
+            </ion-col>
+            <ion-col size="4" class="ion-text-right">
+                <ion-text
+                        [color]="remoteHighscore.id === highscore.id ? 'success': ''">{{remoteHighscore.score | timer}}</ion-text>
+            </ion-col>
+            <ion-col size="6" class="ion-text-right">
+                <ion-text
+                        [color]="remoteHighscore.id === highscore.id ? 'success': ''">{{remoteHighscore.user}}</ion-text>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+    <hr>
+
+    <div *ngIf="highscore.id">
+        <p>
+            <ion-text><h3>Gratulations!</h3></ion-text>
+            <br>
+            You made it to the
+            <ion-text color="success">TOP 10!</ion-text>
+        </p>
+    </div>
+</div>
+
+
+<div class="ion-padding">
+    <ion-button expand="block" fill="solid" color="medium" (click)="onMain()">MAIN</ion-button>
+    <ion-button expand="block" fill="solid" color="medium" (click)="onRetry()">RETRY</ion-button>
+</div>
+
+
+
+
+

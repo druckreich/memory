@@ -1,5 +1,7 @@
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Injectable} from '@angular/core';
+import {Highscore} from '@state/main.models';
+import {map} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
@@ -8,16 +10,19 @@ export class FirebaseService {
     constructor(private firestore: AngularFirestore) {
     }
 
-    public addUser(id: string) {
-        return this.firestore.collection('user').add({'user-id': id});
+    public getHighscore(gameMode: string) {
+        return this.firestore.doc<Highscore>('game/' + gameMode).collection('highscore').snapshotChanges().pipe(
+            map(actions => actions.map(a => {
+                    const data = a.payload.doc.data() as Highscore;
+                    const id = a.payload.doc.id;
+                    return {id, ...data};
+                })
+            )
+        )
     }
 
-    public getUsers() {
-        return this.firestore.collection('user').snapshotChanges();
-    }
-
-    public getHighscores() {
-        return this.firestore.collection('highscore').snapshotChanges();
+    public setHighscore(gameMode: string, highscore: Highscore) {
+        return this.firestore.doc<Highscore>('game/' + gameMode).collection('highscore').add(highscore);
     }
 
 }
