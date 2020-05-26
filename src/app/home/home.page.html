@@ -6,12 +6,7 @@
     </ion-toolbar>
 </ion-header>
 
-
-
 <ion-content [fullscreen]="true">
-    <pre>1513 - {{ 1513 | timer}}</pre>
-    <pre>1090 - {{ 1090 | timer}}</pre>
-    <pre>6666 - {{ 6666 | timer}}</pre>
     <div id="container">
         <memo-game-button *ngFor="let game of games" [game]="game" (click)="onClick($event)"></memo-game-button>
     </div>
