@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file:$PROJECT_DIR$/../../../../..////wsl$/Ubuntu-18.04/root/workspace/memo/.idea/memo.iml" filepath="wsl$/Ubuntu-18.04/../..////wsl$/Ubuntu-18.04/root/workspace/memo/.idea/memo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/memory.iml" filepath="$PROJECT_DIR$/.idea/memory.iml" />
+      <module fileurl="file://file:U:/../..//U:/root/workspace/memory/memory.iml" filepath="file:U:/../..//U:/root/workspace/memory/memory.iml" />
     </modules>
   </component>
 </project>

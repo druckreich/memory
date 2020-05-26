@@ -1,5 +1,7 @@
 {
   "name": "memo",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
