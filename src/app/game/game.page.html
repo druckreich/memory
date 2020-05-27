@@ -4,6 +4,8 @@
     </ion-toolbar>
 </ion-header>
 
+<ion-backdrop *ngIf="showBackdrop"></ion-backdrop>
+
 <ion-content class="ion-padding">
     <div class="game" *ngIf="showStones">
         <ion-grid>
@@ -19,6 +21,6 @@
             </ion-row>
         </ion-grid>
         <memo-game-countdown #countdown *ngIf="showCountdown" (start)="startGame()"></memo-game-countdown>
-        <div class="backdrop" *ngIf="showBackdrop"></div>
+
     </div>
 </ion-content>

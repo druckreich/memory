@@ -80,7 +80,6 @@ export class GamePage implements OnInit {
     }
 
     async showHighscoreModal() {
-        console.log(this.milliseconds);
         const modal = await this.modalController.create({
             component: GameHighscoreModalComponent,
             cssClass: 'highscore',

@@ -1,4 +1,4 @@
-<div class="ion-padding-horizontal">
+<ion-content class="ion-padding-horizontal">
     <h3>{{gameMode.label}}</h3>
     <ion-grid *ngIf="remoteHighscores$ | async as remoteHighscores">
         <ion-row>
@@ -20,24 +20,28 @@
             </ion-col>
         </ion-row>
     </ion-grid>
-
-    <hr>
-
     <div *ngIf="highscore.id">
         <p>
             <ion-text><h3>Gratulations!</h3></ion-text>
-            <br>
             You made it to the
             <ion-text color="success">TOP 10!</ion-text>
         </p>
     </div>
+</ion-content>
+
+<div>
+<ion-grid>
+    <ion-row>
+        <ion-col>
+            <ion-button expand="full" fill="solid" color="light" (click)="onMain()">MAIN</ion-button>
+        </ion-col>
+        <ion-col>
+            <ion-button expand="full" fill="solid" color="light" (click)="onRetry()">RETRY</ion-button>
+        </ion-col>
+    </ion-row>
+</ion-grid>
 </div>
 
-
-<div class="ion-padding">
-    <ion-button expand="block" fill="solid" color="medium" (click)="onMain()">MAIN</ion-button>
-    <ion-button expand="block" fill="solid" color="medium" (click)="onRetry()">RETRY</ion-button>
-</div>
 
 
 

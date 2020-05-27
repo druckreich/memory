@@ -20,8 +20,6 @@ export class GameHighscoreModalComponent implements OnInit {
 
     remoteHighscores$: Observable<Highscore[]>;
 
-    placement: number;
-
     added = false;
 
     constructor(public modalController: ModalController, public firebaseService: FirebaseService) {
@@ -36,7 +34,6 @@ export class GameHighscoreModalComponent implements OnInit {
                 return highscores;
             }),
             tap((highscores: Highscore[]) => {
-                console.log(highscores);
                 if (highscores.length === 0 || highscores.length < 10) {
                     this.setHighscore();
                 } else if (this.highscore.score < highscores[highscores.length - 1].score) {
