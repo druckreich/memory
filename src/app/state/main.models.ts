@@ -20,6 +20,7 @@ export interface GameModeWithHighscore extends GameMode {
 export interface GameMode {
     id: string;
     label: string;
+    description: string;
     setNumber: number;
     setSize: number;
     cols: number;
@@ -32,9 +33,15 @@ export interface Highscore {
     score: number;
 }
 
+export interface User {
+    id?: string;
+    username: string;
+    password: string;
+}
+
 export const GAME_MODES: GameMode[] = [
-    {id: 'normal_test', label: 'Spielwiese', setNumber: 1, setSize: 2, cols: 2, rows: 1},
-    {id: 'normal_small', label: 'Anfänger', setNumber: 6, setSize: 2, cols: 3, rows: 4},
-    {id: 'normal_medium', label: 'Angeber', setNumber: 8, setSize: 2, cols: 4, rows: 4},
-    {id: 'normal_large', label: 'Sensai', setNumber: 10, setSize: 2, cols: 4, rows: 5}
+    {id: 'normal_test', label: 'Playground', description: '', setNumber: 1, setSize: 2, cols: 2, rows: 1},
+    {id: 'normal_small', label: 'Beginner', description: '', setNumber: 6, setSize: 2, cols: 3, rows: 4},
+    {id: 'normal_medium', label: 'Showoff', description: '', setNumber: 8, setSize: 2, cols: 4, rows: 4},
+    {id: 'normal_large', label: 'Sensai', description: '', setNumber: 10, setSize: 2, cols: 4, rows: 5}
 ];

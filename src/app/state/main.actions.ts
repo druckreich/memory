@@ -1,9 +1,9 @@
-import {GameMode, Highscore} from '@state/main.models';
+import {GameMode, Highscore, User} from '@state/main.models';
 
-export class SetUsername {
+export class SetUser {
     static readonly type = '[Main] Set Username';
 
-    constructor(public username: string) {
+    constructor(public user: User) {
     }
 }
 

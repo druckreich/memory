@@ -24,7 +24,7 @@ export class GameButtonComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.highscore$ = this.firebaseService.getHighscore(this.game.id);
+        this.highscore$ = this.firebaseService.getHighscore(this.game.id, true, 3);
     }
 
     onClick() {

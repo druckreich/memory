@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
 import {Action, Selector, State, StateContext} from '@ngxs/store';
-import {SetHighscore, SetUsername} from '@state/main.actions';
+import {SetHighscore, SetUser} from '@state/main.actions';
 import {FirebaseService} from '@state/firebase.service';
+import {User} from '@state/main.models';
 
 export class MainStateModel {
-    public username: string;
+    public user: User;
 }
 
 @State<MainStateModel>({
@@ -15,7 +16,7 @@ export class MainState {
 
     @Selector()
     public static username(state: MainStateModel) {
-        return state.username;
+        return state.user.username;
     }
 
     constructor(public firebaseService: FirebaseService) {
@@ -24,11 +25,11 @@ export class MainState {
     ngxsOnInit(ctx: StateContext<MainStateModel>) {
     }
 
-    @Action(SetUsername)
-    setUsername(ctx: StateContext<MainStateModel>, action: SetUsername) {
+    @Action(SetUser)
+    setUsername(ctx: StateContext<MainStateModel>, action: SetUser) {
         const state = ctx.getState();
         ctx.setState({
-            username: action.username
+            user: action.user
         });
     }
 
