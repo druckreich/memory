@@ -24,7 +24,7 @@ export class GameStoneComponent implements OnInit {
     disabled: boolean;
 
     @Output()
-    clicked: EventEmitter<Stone> = new EventEmitter<Stone>();
+    tabbed: EventEmitter<Stone> = new EventEmitter<Stone>();
 
     @Output()
     unflipped: EventEmitter<Stone> = new EventEmitter();
@@ -42,31 +42,28 @@ export class GameStoneComponent implements OnInit {
 
     }
 
-    onToggleFlip() {
-        this.stone.state = (this.stone.state === StoneState.unflipped) ? StoneState.flipped : StoneState.unflipped;
-    }
-
     onAnimationEvent($event) {
-        if ($event.toState == 'unflipped' && $event.phaseName == 'done') {
+        console.log($event);
+        if ($event.toState === 'unflipped' && $event.phaseName === 'done') {
             this.unflipped.emit(this.stone);
         }
 
-        if ($event.toState == 'flipped' && $event.phaseName == 'done') {
+        if ($event.toState === 'flipped' && $event.phaseName === 'done') {
             this.flipped.emit(this.stone);
         }
 
-        if ($event.toState == 'found' && $event.phaseName == 'done') {
+        if ($event.toState === 'found' && $event.phaseName === 'done') {
             this.found.emit(this.stone);
         }
     }
 
-    onStoneClicked() {
-        if (this.disabled === false && this.stone.disabled === false) {
-            if (this.stone.state === StoneState.flipped) {
-                this.onToggleFlip();
+    onStoneTabbed() {
+        if (this.disabled === false && this.stone.found === false) {
+            if (this.stone.flipped === true) {
+                this.stone.flipped = false;
+                this.stone.state = StoneState.unflipped;
+                this.tabbed.emit(this.stone);
             }
-            this.clicked.emit(this.stone);
         }
     }
-
 }

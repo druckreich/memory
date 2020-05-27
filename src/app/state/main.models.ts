@@ -11,6 +11,8 @@ export interface Stone {
     icon?: string;
     state?: StoneState;
     disabled: boolean;
+    flipped: boolean;
+    found: boolean;
 }
 
 export interface GameModeWithHighscore extends GameMode {

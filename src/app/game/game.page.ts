@@ -38,7 +38,14 @@ export class GamePage implements OnInit {
     ngOnInit() {
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
         this.gameMode = this.gameService.getGameModeById(gameModeId);
-        this.prepareGame();
+        const props: any = {
+            firstRun: true,
+            gameMode: this.gameMode,
+            highscore: {username: this.username, score: null} as Highscore
+        };
+        this.showHighscoreModal(props, (data) => {
+            this.prepareGame();
+        });
     }
 
     gameModeRows(): number[] {
@@ -60,18 +67,10 @@ export class GamePage implements OnInit {
     }
 
     prepareGame(): void {
-        const props: any = {
-            firstRun: true,
-            gameMode: this.gameMode,
-            highscore: {username: this.username, score: null} as Highscore
-        };
         this.timerStatus = GAME_TIMER_STATUS.RESET;
         this.gameService.createStones(this.gameMode).subscribe((stones: Stone[]) => {
             this.stones = stones;
-            this.showHighscoreModal(props, (data) => {
-                console.log('check', data);
-                this.startCountdown();
-            });
+            this.startCountdown();
         });
     }
 
@@ -110,13 +109,11 @@ export class GamePage implements OnInit {
         });
     }
 
-
     onTick(ms: number) {
         this.milliseconds = ms;
     }
 
-    onStoneClicked(stone: Stone):
-        void {
+    onStoneTabbed(stone: Stone): void {
         this.unflippedStones.push(stone);
         if (this.unflippedStones.length === this.gameMode.setSize) {
             this.disableStones = true;
@@ -129,9 +126,9 @@ export class GamePage implements OnInit {
     onStoneFlipped(stone: Stone): void {
     }
 
+    // flip animation ends
     onStoneUnflipped(stone: Stone): void {
-        if (this.unflippedStones.length < this.gameMode.setSize
-        ) {
+        if (this.unflippedStones.length < this.gameMode.setSize) {
             return;
         }
 
@@ -144,7 +141,10 @@ export class GamePage implements OnInit {
             const stones: Stone[] = [...this.unflippedStones];
             this.unflippedStones = [];
             setTimeout(() => {
-                stones.forEach((s: Stone) => s.state = StoneState.flipped);
+                stones.forEach((s: Stone) => {
+                    s.flipped = true;
+                    s.state = StoneState.flipped;
+                });
                 this.disableStones = false;
             }, 400);
             return;
@@ -157,7 +157,10 @@ export class GamePage implements OnInit {
             this.unflippedStones = [];
             this.disableStones = false;
             setTimeout(() => {
-                stones.forEach((s: Stone) => s.state = StoneState.found);
+                stones.forEach((s: Stone) => {
+                    s.found = true;
+                    s.state = StoneState.found;
+                });
             }, 400);
         }
 

@@ -43,7 +43,9 @@ export class GameService {
                 setSize,
                 icon,
                 state: StoneState.flipped,
-                disabled: false
+                disabled: false,
+                flipped: true,
+                found: false
             });
         }
         return set;

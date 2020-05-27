@@ -39,7 +39,9 @@ export class GameHighscoreModalComponent implements OnInit {
                 })
             );
         }
-        this.remoteHighscores$ = highscores$;
+        this.remoteHighscores$ = highscores$.pipe(
+            map((higscores: Highscore[]) => higscores.slice(0, 10))
+        );
     }
 
     setHighscore(highscores: Highscore[], highscore: Highscore): Highscore[] {

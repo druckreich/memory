@@ -1,15 +1,18 @@
 import {NgModule} from '@angular/core';
 import {TimerPipe} from './timer.pipe';
+import {TabDirective} from '@app/tab.directive';
 
 @NgModule({
     declarations: [
-        TimerPipe
+        TimerPipe,
+        TabDirective
     ],
     entryComponents: [],
     imports: [],
     providers: [],
     exports: [
-        TimerPipe
+        TimerPipe,
+        TabDirective
     ]
 })
 export class SharedModule {

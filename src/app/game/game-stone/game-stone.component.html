@@ -1,9 +1,8 @@
-<div class="container">
+<div class="container" (tab)="onStoneTabbed()">
     <div [@flip]="stone.state"
          (@flip.start)="onAnimationEvent($event)"
          (@flip.done)="onAnimationEvent($event)"
-         class="flipper"
-         (click)="onStoneClicked()">
+         class="flipper">
         <div class="sides front" style="padding: 24px;">
             <div class="image" [ngStyle]="{'background-image': 'url('+stone.icon+')'}"></div>
         </div>

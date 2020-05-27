@@ -13,7 +13,7 @@
                 <ion-col *ngFor="let col of gameModeCols(); let ci = index">
                     <memo-game-stone [stone]="stones[(ri * gameMode.cols) + ci]"
                                      [disabled]="disableStones"
-                                     (clicked)="onStoneClicked($event)"
+                                     (tabbed)="onStoneTabbed($event)"
                                      (flipped)="onStoneFlipped($event)"
                                      (unflipped)="onStoneUnflipped($event)"
                                      (found)="onStoneFound($event)"></memo-game-stone>
