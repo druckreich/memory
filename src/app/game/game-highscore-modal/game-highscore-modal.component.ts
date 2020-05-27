@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {GameMode, Highscore} from '@state/main.models';
 import {FirebaseService} from '@state/firebase.service';
-import {map, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {ModalController} from '@ionic/angular';
+import {map} from 'rxjs/operators';
 
 @Component({
     selector: 'memo-game-highscore-modal',
@@ -13,6 +13,9 @@ import {ModalController} from '@ionic/angular';
 export class GameHighscoreModalComponent implements OnInit {
 
     @Input()
+    firstRun: boolean;
+
+    @Input()
     gameMode: GameMode;
 
     @Input()
@@ -20,36 +23,34 @@ export class GameHighscoreModalComponent implements OnInit {
 
     remoteHighscores$: Observable<Highscore[]>;
 
-    added = false;
-
     constructor(public modalController: ModalController, public firebaseService: FirebaseService) {
     }
 
     ngOnInit() {
-        this.remoteHighscores$ = this.firebaseService.getHighscore(this.gameMode.id).pipe(
-            map((highscores: Highscore[]) => {
-                highscores = highscores
-                    .sort((a: Highscore, b: Highscore) => a.score - b.score)
-                    .slice(0, 10);
-                return highscores;
-            }),
-            tap((highscores: Highscore[]) => {
-                if (highscores.length === 0 || highscores.length < 10) {
-                    this.setHighscore();
-                } else if (this.highscore.score < highscores[highscores.length - 1].score) {
-                    this.setHighscore();
-                }
-            })
-        );
+        this.loadHighscores();
     }
 
-    setHighscore(): void {
-        if (this.added === false) {
+    loadHighscores(): void {
+        let highscores$ = this.firebaseService.getHighscore(this.gameMode.id, true);
+        if (!this.firstRun) {
+            highscores$ = highscores$.pipe(
+                map((highscores: Highscore[]) => {
+                    return this.setHighscore(highscores, this.highscore);
+                })
+            );
+        }
+        this.remoteHighscores$ = highscores$;
+    }
+
+    setHighscore(highscores: Highscore[], highscore: Highscore): Highscore[] {
+        if (highscores.length === 0 || highscores.length < 10 || this.highscore.score < highscores[highscores.length - 1].score) {
             this.firebaseService.setHighscore(this.gameMode.id, this.highscore).then(data => {
                 this.highscore.id = data.id;
             });
-            this.added = true;
+            highscores.push(highscore);
+            highscores = highscores.sort((a: Highscore, b: Highscore) => a.score - b.score);
         }
+        return highscores;
     }
 
     onRetry(): void {

@@ -8,7 +8,8 @@
         </ion-row>
         <ion-row *ngFor="let remoteHighscore of remoteHighscores; let i = index">
             <ion-col size="1" class="ion-text-right ion-text-nowrap">
-                <ion-text [color]="remoteHighscore.id === highscore.id ? 'success': ''">{{i + 1}}.</ion-text>
+                <ion-text [color]="remoteHighscore.id === highscore.id ? 'success': ''">{{i + 1}}.
+                </ion-text>
             </ion-col>
             <ion-col size="4" class="ion-text-right">
                 <ion-text
@@ -16,11 +17,11 @@
             </ion-col>
             <ion-col size="6" class="ion-text-right">
                 <ion-text
-                        [color]="remoteHighscore.id === highscore.id ? 'success': ''">{{remoteHighscore.user}}</ion-text>
+                        [color]="remoteHighscore.id === highscore.id ? 'success': ''">{{remoteHighscore.username}}</ion-text>
             </ion-col>
         </ion-row>
     </ion-grid>
-    <div *ngIf="highscore.id">
+    <div *ngIf="highscore?.id">
         <p>
             <ion-text><h3>Gratulations!</h3></ion-text>
             You made it to the

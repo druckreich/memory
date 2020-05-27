@@ -33,30 +33,27 @@ export class FirebaseService {
     }
 
     public getHighscore(gameMode: string, sorted: boolean = false, limit: number = null) {
-        let highscore: Observable<Highscore[]> = this.firestore.doc<Highscore>('game/' + gameMode).collection('highscore').snapshotChanges().pipe(
-            map(actions => actions.map(a => {
-                    const data = a.payload.doc.data() as Highscore;
-                    const id = a.payload.doc.id;
-                    return {id, ...data};
-                })
-            )
+        let highscores: Observable<Highscore[]> = this.firestore.doc<Highscore>('game/' + gameMode).collection('highscore').get().pipe(
+            map(d => d.docs.map((r) => {
+                return {
+                    id: r.id, ...r.data() as Highscore
+                };
+            }))
         );
 
-        console.log('xxx');
-
         if (sorted) {
-            highscore = highscore.pipe(
-                map((highscores: Highscore[]) => highscores.sort((a: Highscore, b: Highscore) => a.score - b.score))
+            highscores = highscores.pipe(
+                map((h: Highscore[]) => h.sort((a: Highscore, b: Highscore) => a.score - b.score))
             );
         }
 
         if (limit) {
-            highscore = highscore.pipe(
-                map((highscores: Highscore[]) => highscores.slice(0, 3))
+            highscores = highscores.pipe(
+                map((h: Highscore[]) => h.slice(0, limit))
             );
         }
 
-        return highscore;
+        return highscores;
     }
 
     public setHighscore(gameMode: string, highscore: Highscore) {

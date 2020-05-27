@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {GAME_MODES, GameMode, Highscore, Stone, StoneState} from '@state/main.models';
+import {GameMode, Highscore, Stone, StoneState} from '@state/main.models';
 import {GameService} from '@state/game.service';
 import {GAME_TIMER_STATUS} from './game-timer/game-timer.component';
 import {Store} from '@ngxs/store';
@@ -36,8 +36,8 @@ export class GamePage implements OnInit {
     }
 
     ngOnInit() {
-        const gameId: string = this.activatedRoute.snapshot.params.id;
-        this.gameMode = GAME_MODES.find((gameMode: GameMode) => gameMode.id === gameId);
+        const gameModeId: string = this.activatedRoute.snapshot.params.id;
+        this.gameMode = this.gameService.getGameModeById(gameModeId);
         this.prepareGame();
     }
 
@@ -49,11 +49,29 @@ export class GamePage implements OnInit {
         return Array(this.gameMode.cols).fill(0).map((x, i) => i);
     }
 
+    async showHighscoreModal(props: any, dismissHandler: any) {
+        const modal = await this.modalController.create({
+            component: GameHighscoreModalComponent,
+            cssClass: 'highscore',
+            componentProps: props
+        });
+        modal.onDidDismiss().then((data) => dismissHandler(data));
+        return await modal.present();
+    }
+
     prepareGame(): void {
+        const props: any = {
+            firstRun: true,
+            gameMode: this.gameMode,
+            highscore: {username: this.username, score: null} as Highscore
+        };
         this.timerStatus = GAME_TIMER_STATUS.RESET;
         this.gameService.createStones(this.gameMode).subscribe((stones: Stone[]) => {
             this.stones = stones;
-            this.startCountdown();
+            this.showHighscoreModal(props, (data) => {
+                console.log('check', data);
+                this.startCountdown();
+            });
         });
     }
 
@@ -76,23 +94,12 @@ export class GamePage implements OnInit {
         this.showCountdown = false;
         this.timerStatus = GAME_TIMER_STATUS.STOP;
 
-        this.showHighscoreModal();
-    }
-
-    async showHighscoreModal() {
-        const modal = await this.modalController.create({
-            component: GameHighscoreModalComponent,
-            cssClass: 'highscore',
-            componentProps: {
-                gameMode: this.gameMode,
-                highscore: {
-                    user: this.username,
-                    score: this.milliseconds
-                } as Highscore
-            }
-        });
-
-        modal.onDidDismiss().then((data) => {
+        const props: any = {
+            firstRun: false,
+            gameMode: this.gameMode,
+            highscore: {username: this.username, score: this.milliseconds} as Highscore
+        };
+        this.showHighscoreModal(props, (data) => {
             if (data.data === 'retry') {
                 this.prepareGame();
             }
@@ -101,15 +108,15 @@ export class GamePage implements OnInit {
                 this.store.dispatch(new Navigate(['/home']));
             }
         });
-
-        return await modal.present();
     }
+
 
     onTick(ms: number) {
         this.milliseconds = ms;
     }
 
-    onStoneClicked(stone: Stone): void {
+    onStoneClicked(stone: Stone):
+        void {
         this.unflippedStones.push(stone);
         if (this.unflippedStones.length === this.gameMode.setSize) {
             this.disableStones = true;
@@ -120,11 +127,11 @@ export class GamePage implements OnInit {
     }
 
     onStoneFlipped(stone: Stone): void {
-
     }
 
     onStoneUnflipped(stone: Stone): void {
-        if (this.unflippedStones.length < this.gameMode.setSize) {
+        if (this.unflippedStones.length < this.gameMode.setSize
+        ) {
             return;
         }
 

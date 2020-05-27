@@ -1,9 +1,14 @@
 <ion-card>
+    <ion-card-header>
+        <ion-card-title>
+            {{game.label}}
+        </ion-card-title>
+        <ion-card-subtitle>
+            <ion-text>{{game.description}}</ion-text>
+        </ion-card-subtitle>
+    </ion-card-header>
+
     <ion-card-content>
-        <ion-text><h2>{{game.label}}</h2></ion-text>
-        <div *ngFor="let s of highscore$ | async">
-            <span class="ion-text-md-nowrap">{{s.user}}</span>{{s.score}}
-        </div>
         <ion-button expand="block" size="large" color="medium" fill="outline" (click)="onClick()">GO</ion-button>
     </ion-card-content>
 </ion-card>

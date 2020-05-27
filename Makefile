@@ -3,18 +3,6 @@ image_name=memo
 build:
 	docker build -t ${image_name}:latest .
 
-serve:
-	docker run --rm -it \
-    	-v $$(pwd):/app \
-    	${image_name} \
-    	ionic serve --address=0.0.0.0
-
-bash:
-	docker run --rm -it \
-	-v $$(pwd):/app \
-	${image_name} \
-	bash
-
 generate-release:
 	docker run --rm \
 			-v ~/.gradle:/root/.gradle \

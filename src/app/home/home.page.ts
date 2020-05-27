@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {Store} from '@ngxs/store';
 import {Navigate} from '@ngxs/router-plugin';
-import {GAME_MODES, GameMode, User} from '@state/main.models';
+import {GameMode, User} from '@state/main.models';
 import {ModalController} from '@ionic/angular';
 import {UserModalComponent} from '@app/home/user-modal/user-modal.component';
+import {GameService} from '@state/game.service';
 
 @Component({
     selector: 'app-home',
@@ -12,10 +13,11 @@ import {UserModalComponent} from '@app/home/user-modal/user-modal.component';
 })
 export class HomePage implements OnInit {
 
-    games: GameMode[] = GAME_MODES;
+    games: GameMode[] = this.gameService.getReleasedGames();
     user: User = this.store.selectSnapshot(s => s.main.user);
 
-    constructor(public store: Store, public modalController: ModalController) {
+    constructor(public store: Store, public gameService: GameService, public modalController: ModalController) {
+
     }
 
     ngOnInit(): void {

@@ -3,6 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {GameMode, Stone, StoneState} from './main.models';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
+import {GAME_MODES} from '@state/game.model';
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +11,14 @@ import {map} from 'rxjs/operators';
 export class GameService {
 
     constructor(public http: HttpClient) {
+    }
+
+    getReleasedGames(): GameMode[] {
+        return GAME_MODES.filter((gameMode: GameMode) => gameMode.released === true);
+    }
+
+    getGameModeById(gameModeId: string) {
+        return GAME_MODES.find((gameMode: GameMode) => gameMode.id === gameModeId);
     }
 
     createStones(gameMode: GameMode): Observable<Stone[]> {
