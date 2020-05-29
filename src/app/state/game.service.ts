@@ -29,8 +29,7 @@ export class GameService {
                 for (let i = 0; i < uniqueSets.length; i++) {
                     stones = stones.concat(this.createSet(gameMode.setSize, uniqueSets[i]));
                 }
-                // return stones.sort(() => Math.random() - 0.5);
-                return stones;
+                return this.shuffleArray(stones);
             }));
     }
 
@@ -49,6 +48,21 @@ export class GameService {
             });
         }
         return set;
+    }
+
+    /**
+     * Shuffles array in place.
+     * @param {Array} a items An array containing the items.
+     */
+    shuffleArray(a) {
+        let j, x, i;
+        for (i = a.length - 1; i > 0; i--) {
+            j = Math.floor(Math.random() * (i + 1));
+            x = a[i];
+            a[i] = a[j];
+            a[j] = x;
+        }
+        return a;
     }
 
     getRandomElementsFromArray(arr, n) {

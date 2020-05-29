@@ -1,13 +1,13 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {GameMode, Highscore, Stone, StoneState} from '@state/main.models';
+import {GameMode, Highscore, HighscoreModalProps, Stone, StoneDimension, StoneState} from '@state/main.models';
 import {GameService} from '@state/game.service';
 import {GAME_TIMER_STATUS} from './game-timer/game-timer.component';
 import {Store} from '@ngxs/store';
-import {ModalController} from '@ionic/angular';
+import {ModalController, Platform} from '@ionic/angular';
 import {GameHighscoreModalComponent} from '@app/game/game-highscore-modal/game-highscore-modal.component';
-import {MainState} from '@state/main.state';
 import {Navigate} from '@ngxs/router-plugin';
+import {FirebaseService} from '@state/firebase.service';
 
 @Component({
     selector: 'memo-game',
@@ -16,10 +16,16 @@ import {Navigate} from '@ngxs/router-plugin';
 })
 export class GamePage implements OnInit {
 
+    @ViewChild('content', {static: true})
+    ionContent: any;
+
+    @ViewChild('board', {static: true})
+    boardElement: ElementRef;
+
     stones: Stone[];
     unflippedStones: Stone[] = [];
 
-    username: string = this.store.selectSnapshot(MainState.username);
+    stoneDimension: StoneDimension;
 
     gameMode: GameMode;
     showStones = false;
@@ -29,34 +35,78 @@ export class GamePage implements OnInit {
     timerStatus: GAME_TIMER_STATUS = GAME_TIMER_STATUS.STOP;
     milliseconds: number;
 
-    constructor(public store: Store,
-                public activatedRoute: ActivatedRoute,
+    constructor(public activatedRoute: ActivatedRoute,
+                public store: Store,
+                public firebaseService: FirebaseService,
                 public gameService: GameService,
-                public modalController: ModalController) {
+                public modalController: ModalController,
+                public platform: Platform) {
     }
 
     ngOnInit() {
+
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
         this.gameMode = this.gameService.getGameModeById(gameModeId);
-        const props: any = {
-            firstRun: true,
+
+        // set up user stats for this game mode
+        this.firebaseService.setUserStatsIfNotExists(this.gameMode.id);
+
+        const props: HighscoreModalProps = {
             gameMode: this.gameMode,
-            highscore: {username: this.username, score: null} as Highscore
+            updateGameStats: true,
+            updateHighscore: false
         };
         this.showHighscoreModal(props, (data) => {
-            this.prepareGame();
+            if (data.data === 'retry') {
+                this.prepareGame();
+            }
+
+            if (data.data === 'main') {
+                this.store.dispatch(new Navigate(['/home']));
+            }
         });
     }
 
-    gameModeRows(): number[] {
-        return Array(this.gameMode.rows).fill(0).map((x, i) => i);
+    setStoneDimension() {
+
+        const contentHeight: number = this.ionContent.el.offsetHeight;
+        const boardWidth: number = this.boardElement.nativeElement.offsetWidth;
+        const stones: number = this.gameMode.setSize * this.gameMode.setNumber;
+
+        let stoneWidth: number;
+        let stonePadding: number;
+        let stoneMarginBottom: number;
+
+        let rows = 0;
+        let cols = 0;
+
+        let valid = false;
+        let loops = 0;
+
+        stonePadding = 12;
+        stoneMarginBottom = 4;
+
+        do {
+            loops++;
+            rows++;
+            //if (stones % rows === 0) {
+            stoneWidth = (boardWidth / rows) - stonePadding;
+            cols = stones / rows;
+            if (cols > rows * 2) {
+            } else {
+                if ((stoneWidth + stoneMarginBottom) * cols < contentHeight) {
+                    valid = true;
+                }
+            }
+            //}
+            if (loops > 10) {
+                throw Error('No valid layout found');
+            }
+        } while (valid === false);
+        this.stoneDimension = {width: stoneWidth, padding: stonePadding, marginBottom: stoneMarginBottom};
     }
 
-    gameModeCols(): number[] {
-        return Array(this.gameMode.cols).fill(0).map((x, i) => i);
-    }
-
-    async showHighscoreModal(props: any, dismissHandler: any) {
+    async showHighscoreModal(props: HighscoreModalProps, dismissHandler: any) {
         const modal = await this.modalController.create({
             component: GameHighscoreModalComponent,
             cssClass: 'highscore',
@@ -70,8 +120,12 @@ export class GamePage implements OnInit {
         this.timerStatus = GAME_TIMER_STATUS.RESET;
         this.gameService.createStones(this.gameMode).subscribe((stones: Stone[]) => {
             this.stones = stones;
-            this.startCountdown();
+            this.startGame();
         });
+    }
+
+    ionViewDidEnter() {
+        this.setStoneDimension();
     }
 
     startCountdown(): void {
@@ -81,10 +135,10 @@ export class GamePage implements OnInit {
     }
 
     startGame(): void {
+        this.showStones = true;
         this.showBackdrop = false;
         this.disableStones = false;
         this.showCountdown = false;
-        this.timerStatus = GAME_TIMER_STATUS.START;
     }
 
     stopGame(): void {
@@ -93,10 +147,11 @@ export class GamePage implements OnInit {
         this.showCountdown = false;
         this.timerStatus = GAME_TIMER_STATUS.STOP;
 
-        const props: any = {
-            firstRun: false,
+        const props: HighscoreModalProps = {
             gameMode: this.gameMode,
-            highscore: {username: this.username, score: this.milliseconds} as Highscore
+            highscore: {score: this.milliseconds} as Highscore,
+            updateHighscore: true,
+            updateGameStats: true
         };
         this.showHighscoreModal(props, (data) => {
             if (data.data === 'retry') {
@@ -114,6 +169,10 @@ export class GamePage implements OnInit {
     }
 
     onStoneTabbed(stone: Stone): void {
+        if (this.timerStatus !== GAME_TIMER_STATUS.START) {
+            this.timerStatus = GAME_TIMER_STATUS.START;
+        }
+
         this.unflippedStones.push(stone);
         if (this.unflippedStones.length === this.gameMode.setSize) {
             this.disableStones = true;

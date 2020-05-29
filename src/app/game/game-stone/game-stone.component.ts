@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Stone, StoneState} from '@state/main.models';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Stone, StoneDimension, StoneState} from '@state/main.models';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
@@ -21,6 +21,9 @@ export class GameStoneComponent implements OnInit {
     stone: Stone;
 
     @Input()
+    dimension: StoneDimension;
+
+    @Input()
     disabled: boolean;
 
     @Output()
@@ -35,7 +38,7 @@ export class GameStoneComponent implements OnInit {
     @Output()
     found: EventEmitter<Stone> = new EventEmitter();
 
-    constructor() {
+    constructor(public cd: ChangeDetectorRef) {
     }
 
     ngOnInit() {
@@ -43,7 +46,6 @@ export class GameStoneComponent implements OnInit {
     }
 
     onAnimationEvent($event) {
-        console.log($event);
         if ($event.toState === 'unflipped' && $event.phaseName === 'done') {
             this.unflipped.emit(this.stone);
         }
@@ -63,6 +65,7 @@ export class GameStoneComponent implements OnInit {
                 this.stone.flipped = false;
                 this.stone.state = StoneState.unflipped;
                 this.tabbed.emit(this.stone);
+                this.cd.detectChanges();
             }
         }
     }

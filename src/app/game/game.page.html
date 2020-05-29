@@ -6,21 +6,20 @@
 
 <ion-backdrop *ngIf="showBackdrop"></ion-backdrop>
 
-<ion-content class="ion-padding">
-    <div class="game" *ngIf="showStones">
-        <ion-grid>
-            <ion-row *ngFor="let row of gameModeRows(); let ri = index">
-                <ion-col *ngFor="let col of gameModeCols(); let ci = index">
-                    <memo-game-stone [stone]="stones[(ri * gameMode.cols) + ci]"
-                                     [disabled]="disableStones"
-                                     (tabbed)="onStoneTabbed($event)"
-                                     (flipped)="onStoneFlipped($event)"
-                                     (unflipped)="onStoneUnflipped($event)"
-                                     (found)="onStoneFound($event)"></memo-game-stone>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
+<ion-content #content class="ion-padding" [scrollY]="false" [scrollX]="false">
+    <div class="game">
+        <div #board class="board">
+            <div class="stone" *ngFor="let stone of stones">
+                <memo-game-stone *ngIf="showStones"
+                                 [stone]="stone"
+                                 [dimension]="stoneDimension"
+                                 [disabled]="disableStones"
+                                 (tabbed)="onStoneTabbed($event)"
+                                 (flipped)="onStoneFlipped($event)"
+                                 (unflipped)="onStoneUnflipped($event)"
+                                 (found)="onStoneFound($event)"></memo-game-stone>
+            </div>
+        </div>
         <memo-game-countdown #countdown *ngIf="showCountdown" (start)="startGame()"></memo-game-countdown>
-
     </div>
 </ion-content>

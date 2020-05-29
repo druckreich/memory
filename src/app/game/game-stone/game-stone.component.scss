@@ -1,13 +1,16 @@
 .container {
   perspective: 1000px;
   transform-style: preserve-3d;
+  margin: 4px;
 }
 
 .flipper {
   position: relative;
-  width: 128px;
-  height: 128px;
   transform-style: preserve-3d;
+  transform: rotateY(180deg);
+  height: 128px;
+  width: 128px;
+
 }
 
 .sides {
@@ -25,20 +28,15 @@
 .front {
   background-color: white;
   border: solid 2px #eee;
-  border-radius: 12px;
-}
-
-.front img {
-  width: 128px;
-  height: 128px;
-  padding: 24px;
+  border-radius: 4px;
+  padding: 8px;
 }
 
 .back {
   background-color: white;
   border: solid 2px #eee;
   transform: rotateY(180deg);
-  border-radius: 12px;
+  border-radius: 4px;
 }
 
 .image {

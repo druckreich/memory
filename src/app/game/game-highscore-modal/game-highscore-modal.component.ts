@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {GameMode, Highscore} from '@state/main.models';
+import {GameMode, GameStats, Highscore} from '@state/main.models';
 import {FirebaseService} from '@state/firebase.service';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {ModalController} from '@ionic/angular';
 import {map} from 'rxjs/operators';
 
@@ -13,13 +13,19 @@ import {map} from 'rxjs/operators';
 export class GameHighscoreModalComponent implements OnInit {
 
     @Input()
-    firstRun: boolean;
-
-    @Input()
     gameMode: GameMode;
 
     @Input()
     highscore: Highscore;
+
+    @Input()
+    updateHighscore: boolean;
+
+    @Input()
+    stats: GameStats;
+
+    @Input()
+    updateGameStats: boolean;
 
     remoteHighscores$: Observable<Highscore[]>;
 
@@ -27,21 +33,38 @@ export class GameHighscoreModalComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.loadUserStats();
         this.loadHighscores();
     }
 
+    loadUserStats() {
+        const subscription: Subscription = this.firebaseService.getUserStats(this.gameMode.id).subscribe(
+            (stats: GameStats) => {
+                if (!this.updateGameStats) {
+                    this.setUserStats(stats);
+                }
+                subscription.unsubscribe();
+            });
+    }
+
+    setUserStats(stats: GameStats) {
+        /*
+        stats.completed = stats.completed ? stats.completed++ : 0;
+        this.firebaseService.setUserStats(this.gameMode.id, stats);
+        console.log(stats);
+         */
+    }
+
     loadHighscores(): void {
-        let highscores$ = this.firebaseService.getHighscore(this.gameMode.id, true);
-        if (!this.firstRun) {
+        let highscores$ = this.firebaseService.getHighscore(this.gameMode.id, true, 10);
+        if (this.updateHighscore) {
             highscores$ = highscores$.pipe(
                 map((highscores: Highscore[]) => {
                     return this.setHighscore(highscores, this.highscore);
                 })
             );
         }
-        this.remoteHighscores$ = highscores$.pipe(
-            map((higscores: Highscore[]) => higscores.slice(0, 10))
-        );
+        this.remoteHighscores$ = highscores$;
     }
 
     setHighscore(highscores: Highscore[], highscore: Highscore): Highscore[] {

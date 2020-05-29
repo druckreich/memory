@@ -13,3 +13,12 @@
   background-color: #e2e2e2;
   opacity: 0.4;
 }
+
+.game .board {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.game .board .stone {
+  flex: 0 0 auto;
+}

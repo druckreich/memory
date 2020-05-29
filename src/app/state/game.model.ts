@@ -7,41 +7,42 @@ export const GAME_MODES: GameMode[] = [
         description: '',
         setNumber: 1,
         setSize: 2,
-        cols: 2,
-        rows: 1,
         released: true,
         locked: false
     },
     {
         id: 'normal_small',
-        label: 'Spring',
-        description: 'The first quarter of the year',
+        label: 'Easy',
+        description: '',
         setNumber: 6,
         setSize: 2,
-        cols: 3,
-        rows: 4,
         released: true,
         locked: false
     },
     {
         id: 'normal_medium',
-        label: 'Showoff',
+        label: 'Medium',
         description: '',
         setNumber: 8,
         setSize: 2,
-        cols: 4,
-        rows: 4,
         released: true,
         locked: true
     },
     {
         id: 'normal_large',
-        label: 'Sensai',
+        label: 'Hard',
         description: '',
         setNumber: 10,
         setSize: 2,
-        cols: 4,
-        rows: 5,
+        released: true,
+        locked: true
+    },
+    {
+        id: 'normal_xlarge',
+        label: 'Brutal',
+        description: '',
+        setNumber: 15,
+        setSize: 2,
         released: true,
         locked: true
     }

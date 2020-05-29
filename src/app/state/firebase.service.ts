@@ -1,22 +1,27 @@
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Injectable} from '@angular/core';
-import {Highscore, User} from '@state/main.models';
+import {GameStats, Highscore, User} from '@state/main.models';
 import {map} from 'rxjs/operators';
-import {AngularFireDatabase} from '@angular/fire/database';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
+import {Store} from '@ngxs/store';
+import {MainState} from '@state/main.state';
+
 
 @Injectable({
     providedIn: 'root'
 })
 export class FirebaseService {
-    constructor(private firestore: AngularFirestore, public db: AngularFireDatabase) {
+
+    user: User = this.store.selectSnapshot(MainState.user);
+
+    constructor(public store: Store, private firestore: AngularFirestore) {
     }
 
     public getUser(user: User) {
-        return this.firestore.doc('user/' + user.username).snapshotChanges().pipe(
+        return this.firestore.doc('user/' + user.username).get().pipe(
             map(action => {
-                const data = action.payload.data() as User;
-                const id = action.payload.id;
+                const data = action.data() as User;
+                const id = action.id;
                 return {id, ...data} as User;
             })
         );
@@ -58,6 +63,29 @@ export class FirebaseService {
 
     public setHighscore(gameMode: string, highscore: Highscore) {
         return this.firestore.doc<Highscore>('game/' + gameMode).collection('highscore').add(highscore);
+    }
+
+    public setUserStatsIfNotExists(gameMode: string) {
+        const subscription: Subscription = this.getUserStats(gameMode).subscribe((stats: GameStats) => {
+            if (undefined === stats) {
+                const s: GameStats = {completed: 0};
+                this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(gameMode).set(s);
+            }
+        });
+    }
+
+    public getUserStats(gameMode: string) {
+        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(gameMode).get().pipe(
+            map(d => {
+                if (d.exists) {
+                    return {id: d.id, ...d.data() as GameStats};
+                }
+            }));
+    }
+
+    public setUserStats(gameMode: string, stats: GameStats) {
+        console.log('set stats', this.user.username, gameMode, stats);
+        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(gameMode).update(stats);
     }
 
 }
