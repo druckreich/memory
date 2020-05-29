@@ -62,6 +62,7 @@ export class FirebaseService {
     }
 
     public setHighscore(gameMode: string, highscore: Highscore) {
+        highscore.username = this.user.username;
         return this.firestore.doc<Highscore>('game/' + gameMode).collection('highscore').add(highscore);
     }
 

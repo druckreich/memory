@@ -29,6 +29,7 @@ export class GameService {
                 for (let i = 0; i < uniqueSets.length; i++) {
                     stones = stones.concat(this.createSet(gameMode.setSize, uniqueSets[i]));
                 }
+                console.log(stones);
                 return this.shuffleArray(stones);
             }));
     }

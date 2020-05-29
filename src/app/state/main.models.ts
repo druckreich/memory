@@ -33,6 +33,7 @@ export interface GameMode {
     setSize: number;
     released: boolean;
     locked: boolean;
+    rows?: number[];
 }
 
 export interface Highscore {

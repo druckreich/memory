@@ -15,8 +15,13 @@
 }
 
 .game .board {
+  //display: flex;
+  //flex-wrap: wrap;
+}
+
+.game .board .row {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .game .board .stone {

@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {GameMode, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
 import {GameService} from '@state/game.service';
@@ -15,12 +15,6 @@ import {FirebaseService} from '@state/firebase.service';
     styleUrls: ['./game.page.scss'],
 })
 export class GamePage implements OnInit {
-
-    @ViewChild('content', {static: true})
-    ionContent: any;
-
-    @ViewChild('board', {static: true})
-    boardElement: ElementRef;
 
     stones: Stone[];
     unflippedStones: Stone[] = [];
@@ -73,6 +67,18 @@ export class GamePage implements OnInit {
         modal.onDidDismiss().then((data) => dismissHandler(data));
         return await modal.present();
     }
+
+    getArray(counter: number) {
+        return new Array(counter);
+    }
+
+    getIndex(ri: number, ci: number): number {
+        return this.gameMode.rows
+            .slice(0, ri)
+            .reduce((total, currentValue, currentIndex, array) => {
+                return total + currentValue;
+            }, 0) + ci;
+   }
 
     prepareGame(): void {
         this.timerStatus = GAME_TIMER_STATUS.RESET;
