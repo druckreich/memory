@@ -1,10 +1,10 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {GameMode, Highscore, HighscoreModalProps, Stone, StoneDimension, StoneState} from '@state/main.models';
+import {GameMode, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
 import {GameService} from '@state/game.service';
 import {GAME_TIMER_STATUS} from './game-timer/game-timer.component';
 import {Store} from '@ngxs/store';
-import {ModalController, Platform} from '@ionic/angular';
+import {ModalController} from '@ionic/angular';
 import {GameHighscoreModalComponent} from '@app/game/game-highscore-modal/game-highscore-modal.component';
 import {Navigate} from '@ngxs/router-plugin';
 import {FirebaseService} from '@state/firebase.service';
@@ -25,8 +25,6 @@ export class GamePage implements OnInit {
     stones: Stone[];
     unflippedStones: Stone[] = [];
 
-    stoneDimension: StoneDimension;
-
     gameMode: GameMode;
     showStones = false;
     disableStones = false;
@@ -39,8 +37,7 @@ export class GamePage implements OnInit {
                 public store: Store,
                 public firebaseService: FirebaseService,
                 public gameService: GameService,
-                public modalController: ModalController,
-                public platform: Platform) {
+                public modalController: ModalController) {
     }
 
     ngOnInit() {
@@ -67,45 +64,6 @@ export class GamePage implements OnInit {
         });
     }
 
-    setStoneDimension() {
-
-        const contentHeight: number = this.ionContent.el.offsetHeight;
-        const boardWidth: number = this.boardElement.nativeElement.offsetWidth;
-        const stones: number = this.gameMode.setSize * this.gameMode.setNumber;
-
-        let stoneWidth: number;
-        let stonePadding: number;
-        let stoneMarginBottom: number;
-
-        let rows = 0;
-        let cols = 0;
-
-        let valid = false;
-        let loops = 0;
-
-        stonePadding = 12;
-        stoneMarginBottom = 4;
-
-        do {
-            loops++;
-            rows++;
-            //if (stones % rows === 0) {
-            stoneWidth = (boardWidth / rows) - stonePadding;
-            cols = stones / rows;
-            if (cols > rows * 2) {
-            } else {
-                if ((stoneWidth + stoneMarginBottom) * cols < contentHeight) {
-                    valid = true;
-                }
-            }
-            //}
-            if (loops > 10) {
-                throw Error('No valid layout found');
-            }
-        } while (valid === false);
-        this.stoneDimension = {width: stoneWidth, padding: stonePadding, marginBottom: stoneMarginBottom};
-    }
-
     async showHighscoreModal(props: HighscoreModalProps, dismissHandler: any) {
         const modal = await this.modalController.create({
             component: GameHighscoreModalComponent,
@@ -122,10 +80,6 @@ export class GamePage implements OnInit {
             this.stones = stones;
             this.startGame();
         });
-    }
-
-    ionViewDidEnter() {
-        this.setStoneDimension();
     }
 
     startCountdown(): void {
