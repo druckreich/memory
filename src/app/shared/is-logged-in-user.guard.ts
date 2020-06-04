@@ -1,32 +1,40 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree} from '@angular/router';
-import {Observable} from 'rxjs';
+import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
+import {Observable, of} from 'rxjs';
 import {Select} from '@ngxs/store';
 import {MainState} from '@state/main.state';
 import {User} from '@state/main.models';
 import {ModalController} from '@ionic/angular';
 import {LogInModalComponent} from '@app/shared/log-in-modal/log-in-modal.component';
+import {flatMap} from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
 })
 export class IsLoggedInUserGuard implements CanActivate {
 
-    @Select(MainState)
-    public readonly user: Observable<User>;
+    @Select(MainState.user)
+    public readonly user$: Observable<User>;
 
     constructor(public modalController: ModalController) {
     }
 
     canActivate(
         next: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+        state: RouterStateSnapshot): Observable<boolean> {
 
-        return this.showUserModal();
-
+        return this.user$.pipe(
+            flatMap((user: User) => {
+                if (user) {
+                    return of(true);
+                } else {
+                    return this.showUserModal();
+                }
+            })
+        );
     }
 
-    async showUserModal() {
+    async showUserModal(): Promise<boolean> {
         const modal = await this.modalController.create({
             component: LogInModalComponent,
             cssClass: 'user',
@@ -37,7 +45,8 @@ export class IsLoggedInUserGuard implements CanActivate {
 
         return await modal.onDidDismiss().then(
             (data) => {
-                return true;
+                console.log(data);
+                return !!data.data ? true : false;
             }
         );
     }

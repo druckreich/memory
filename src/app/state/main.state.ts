@@ -9,7 +9,10 @@ export class MainStateModel {
 }
 
 @State<MainStateModel>({
-    name: 'main'
+    name: 'main',
+    defaults: {
+        user: null
+    }
 })
 @Injectable()
 export class MainState {
