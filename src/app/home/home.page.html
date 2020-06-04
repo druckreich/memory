@@ -1,8 +1,13 @@
-<div class="header">
-    <div class="start"></div>
-    <div class="middel"></div>
-    <div class="end"></div>
-</div>
+<ion-header [translucent]="true" class="ion-no-border ion-padding">
+    <ion-toolbar>
+        <ion-badge slot="start" color="light">SUPER</ion-badge>
+
+        <ion-label>
+            Memory
+        </ion-label>
+        <ion-badge slot="end" color="medium" class="ion-padding-end ion-padding-start">SUPER</ion-badge>
+    </ion-toolbar>
+</ion-header>
 
 <ion-content [fullscreen]="true">
     <div id="container">
