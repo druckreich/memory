@@ -1,11 +1,13 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Stone, StoneDimension, StoneState} from '@state/main.models';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {produce} from 'immer';
 
 @Component({
     selector: 'memo-game-stone',
     templateUrl: './game-stone.component.html',
     styleUrls: ['./game-stone.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [
         trigger('flip', [
             state('flipped', style({transform: 'rotateY(180deg)'})),
@@ -62,8 +64,10 @@ export class GameStoneComponent implements OnInit {
     onStoneTabbed() {
         if (this.disabled === false && this.stone.found === false) {
             if (this.stone.flipped === true) {
-                this.stone.flipped = false;
-                this.stone.state = StoneState.unflipped;
+                this.stone = produce(this.stone, draft => {
+                    draft.flipped = false;
+                    draft.state = StoneState.unflipped;
+                });
                 this.tabbed.emit(this.stone);
                 this.cd.detectChanges();
             }

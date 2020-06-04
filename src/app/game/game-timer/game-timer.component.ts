@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges} from '@angular/core';
 
 export const enum GAME_TIMER_STATUS {
     START, STOP, RESET
@@ -8,6 +8,7 @@ export const enum GAME_TIMER_STATUS {
     selector: 'memo-game-timer',
     templateUrl: './game-timer.component.html',
     styleUrls: ['./game-timer.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameTimerComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -25,7 +26,8 @@ export class GameTimerComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     ngOnInit() {
-
+        this.running = false;
+        this.counter = 0;
     }
 
     ngOnChanges(changes: SimpleChanges): void {

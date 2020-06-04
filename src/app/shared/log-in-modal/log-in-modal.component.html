@@ -1,0 +1,31 @@
+<ion-content class="ion-padding">
+    <h3>Login</h3>
+    <ion-item>
+        <ion-input #username placeholder="name"></ion-input>
+    </ion-item>
+    <ion-item>
+        <ion-input #password placeholder="password"></ion-input>
+    </ion-item>
+
+    <div class="ion-padding-top">
+        <ion-text color="danger" *ngIf="invalid">
+            Username is already taken or wrong password
+        </ion-text>
+    </div>
+</ion-content>
+
+<div class="ion-padding-horizontal ion-padding-bottom">
+    <ion-row>
+        <ion-col>
+            <ion-button expand="full" fill="solid" color="light" [disabled]="!username.value || !password.value"
+                        (click)="onSetUser(username.value, password.value)">LOGIN
+            </ion-button>
+        </ion-col>
+        <ion-col>
+            <ion-button expand="full" fill="solid" color="light"
+                        (click)="onContinueAsGuest()">ABBRECHEN
+            </ion-button>
+        </ion-col>
+    </ion-row>
+</div>
+

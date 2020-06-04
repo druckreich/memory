@@ -4,17 +4,17 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-backdrop *ngIf="showBackdrop"></ion-backdrop>
+<ion-backdrop *ngIf="gameState.showBackdrop"></ion-backdrop>
 
 <ion-content #content class="ion-padding" [scrollY]="false" [scrollX]="false">
     <div class="game">
         <div #board class="board">
             <div class="row" *ngFor="let r of gameMode.rows; let ri = index">
-                <div class="col" *ngFor="let c of getArray(r); let ci = index">
+                <div class="col" *ngFor="let c of getArrayOfNumber(r); let ci = index">
                     <div class="stone">
-                        <memo-game-stone *ngIf="showStones"
-                                         [stone]="stones[getIndex(ri, ci)]"
-                                         [disabled]="disableStones"
+                        <memo-game-stone *ngIf="gameState.showStones"
+                                         [stone]="stones[getIndexOfStone(ri, ci)]"
+                                         [disabled]="gameState.disableStones"
                                          (tabbed)="onStoneTabbed($event)"
                                          (flipped)="onStoneFlipped($event)"
                                          (unflipped)="onStoneUnflipped($event)"
@@ -22,9 +22,7 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
-    <memo-game-countdown #countdown *ngIf="showCountdown" (start)="startGame()"></memo-game-countdown>
+    <memo-game-countdown #countdown *ngIf="gameState.showCountdown" (start)="startGame()"></memo-game-countdown>
 </ion-content>

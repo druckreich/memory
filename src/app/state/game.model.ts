@@ -7,7 +7,7 @@ export const GAME_MODES: GameMode[] = [
         description: '',
         setNumber: 2,
         setSize: 2,
-        released: false,
+        released: true,
         locked: false,
         rows: [2, 2]
     },
@@ -69,6 +69,6 @@ export const GAME_MODES: GameMode[] = [
         setSize: 2,
         released: true,
         locked: true,
-        rows: [3, 4, 5, 4, 3]
+        rows: [3, 4, 4, 4, 3]
     }
 ];

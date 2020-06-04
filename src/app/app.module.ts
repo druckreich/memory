@@ -19,14 +19,19 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireDatabaseModule} from '@angular/fire/database';
-import {SharedModule} from '@app/shared.module';
+import {NgxsDispatchPluginModule} from '@ngxs-labs/dispatch-decorator';
+import {NavigationState} from '@state/navigation.state';
+import {LogInModalComponent} from '@app/shared/log-in-modal/log-in-modal.component';
 
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        LogInModalComponent
     ],
-    entryComponents: [],
+    entryComponents: [
+        LogInModalComponent
+    ],
     imports: [
         BrowserAnimationsModule,
         BrowserModule,
@@ -39,15 +44,14 @@ import {SharedModule} from '@app/shared.module';
         AngularFireDatabaseModule,
 
         // ngxs integration
-        NgxsModule.forRoot([MainState], {
+        NgxsModule.forRoot([MainState, NavigationState], {
             developmentMode: !environment.production
         }),
         NgxsStoragePluginModule.forRoot({
             key: [MainState]
         }),
         NgxsRouterPluginModule.forRoot(),
-
-        SharedModule
+        NgxsDispatchPluginModule.forRoot()
     ],
     providers: [
         StatusBar,

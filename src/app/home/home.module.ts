@@ -6,8 +6,6 @@ import {HomePage} from './home.page';
 
 import {HomePageRoutingModule} from './home-routing.module';
 import {GameButtonComponent} from './game-button/game-button.component';
-import {UserModalComponent} from '@app/home/user-modal/user-modal.component';
-import {SharedModule} from '@app/shared.module';
 
 
 @NgModule({
@@ -15,17 +13,13 @@ import {SharedModule} from '@app/shared.module';
         CommonModule,
         FormsModule,
         IonicModule,
-        SharedModule,
         HomePageRoutingModule
     ],
     declarations: [
         HomePage,
-        GameButtonComponent,
-        UserModalComponent
+        GameButtonComponent
     ],
-    entryComponents: [
-        UserModalComponent
-    ]
+    entryComponents: []
 })
 export class HomePageModule {
 }

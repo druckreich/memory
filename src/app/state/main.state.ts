@@ -19,12 +19,6 @@ export class MainState {
         return state.user;
     }
 
-
-    @Selector()
-    public static username(state: MainStateModel) {
-        return state.user.username;
-    }
-
     constructor() {
     }
 
@@ -32,11 +26,9 @@ export class MainState {
     }
 
     @Action(SetUser)
-    setUsername(ctx: StateContext<MainStateModel>, action: SetUser) {
-        const state = ctx.getState();
-        ctx.setState({
-            user: action.user
-        });
+    setUser(ctx: StateContext<MainStateModel>, action: SetUser) {
+        action.execute(ctx, action);
+
     }
 }
 

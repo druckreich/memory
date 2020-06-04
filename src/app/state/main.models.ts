@@ -7,12 +7,12 @@ export enum StoneState {
 export interface Stone {
     id?: string;
     setId?: string;
-    setSize: number;
+    setSize?: number;
     icon?: string;
     state?: StoneState;
-    disabled: boolean;
-    flipped: boolean;
-    found: boolean;
+    disabled?: boolean;
+    flipped?: boolean;
+    found?: boolean;
 }
 
 export interface StoneDimension {
@@ -44,7 +44,7 @@ export interface Highscore {
 
 export interface GameStats {
     id?: string;
-    completed: number;
+    completed?: number;
 }
 
 export interface User {

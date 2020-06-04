@@ -8,11 +8,11 @@ import {MainState} from '@state/main.state';
 
 
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
 })
 export class FirebaseService {
 
-    user: User = this.store.selectSnapshot(MainState.user);
+    private readonly user: User = this.store.selectSnapshot(MainState.user);
 
     constructor(public store: Store, private firestore: AngularFirestore) {
     }
@@ -66,16 +66,11 @@ export class FirebaseService {
         return this.firestore.doc<Highscore>('game/' + gameMode).collection('highscore').add(highscore);
     }
 
-    public setUserStatsIfNotExists(gameMode: string) {
-        const subscription: Subscription = this.getUserStats(gameMode).subscribe((stats: GameStats) => {
-            if (undefined === stats) {
-                const s: GameStats = {completed: 0};
-                this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(gameMode).set(s);
-            }
-        });
-    }
+    public getUserStats(gameMode: string): Observable<GameStats> {
+        if (!this.user) {
+            return null;
+        }
 
-    public getUserStats(gameMode: string) {
         return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(gameMode).get().pipe(
             map(d => {
                 if (d.exists) {
@@ -85,8 +80,20 @@ export class FirebaseService {
     }
 
     public setUserStats(gameMode: string, stats: GameStats) {
-        console.log('set stats', this.user.username, gameMode, stats);
         return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(gameMode).update(stats);
+    }
+
+    public setUserStatsIfNotExists(gameMode: string) {
+        if (!this.user) {
+            return null;
+        }
+
+        const subscription: Subscription = this.getUserStats(gameMode).subscribe((stats: GameStats) => {
+            if (undefined === stats) {
+                const s: GameStats = {completed: 0};
+                this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(gameMode).set(s);
+            }
+        });
     }
 
 }

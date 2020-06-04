@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {GameMode, GameStats, Highscore} from '@state/main.models';
 import {FirebaseService} from '@state/firebase.service';
 import {Observable, Subscription} from 'rxjs';
@@ -9,6 +9,7 @@ import {map} from 'rxjs/operators';
     selector: 'memo-game-highscore-modal',
     templateUrl: './game-highscore-modal.component.html',
     styleUrls: ['./game-highscore-modal.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameHighscoreModalComponent implements OnInit {
 

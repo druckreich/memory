@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {GameMode, GameModeWithHighscore, Highscore} from '@state/main.models';
 import {Store} from '@ngxs/store';
 import {FirebaseService} from '@state/firebase.service';
@@ -8,6 +8,7 @@ import {Observable} from 'rxjs';
     selector: 'memo-game-button',
     templateUrl: './game-button.component.html',
     styleUrls: ['./game-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameButtonComponent implements OnInit {
 

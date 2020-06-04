@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {GameMode, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
 import {GameService} from '@state/game.service';
@@ -8,22 +8,31 @@ import {ModalController} from '@ionic/angular';
 import {GameHighscoreModalComponent} from '@app/game/game-highscore-modal/game-highscore-modal.component';
 import {Navigate} from '@ngxs/router-plugin';
 import {FirebaseService} from '@state/firebase.service';
+import {produce} from 'immer';
 
 @Component({
     selector: 'memo-game',
     templateUrl: './game.page.html',
     styleUrls: ['./game.page.scss'],
+    changeDetection: ChangeDetectionStrategy.Default
 })
 export class GamePage implements OnInit {
 
-    stones: Stone[];
-    unflippedStones: Stone[] = [];
+    private readonly gameMode: GameMode;
 
-    gameMode: GameMode;
-    showStones = false;
-    disableStones = false;
-    showBackdrop = false;
-    showCountdown = false;
+    stones: Stone[] = produce([], draft => {
+    });
+
+    unflippedStones: Stone[] = produce([], draft => {
+    });
+
+    gameState: any = {
+        showStones: false,
+        disableStones: false,
+        showBackdrop: false,
+        showCountdown: false
+    };
+
     timerStatus: GAME_TIMER_STATUS = GAME_TIMER_STATUS.STOP;
     milliseconds: number;
 
@@ -32,12 +41,13 @@ export class GamePage implements OnInit {
                 public firebaseService: FirebaseService,
                 public gameService: GameService,
                 public modalController: ModalController) {
-    }
-
-    ngOnInit() {
 
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
         this.gameMode = this.gameService.getGameModeById(gameModeId);
+
+    }
+
+    ngOnInit() {
 
         // set up user stats for this game mode
         this.firebaseService.setUserStatsIfNotExists(this.gameMode.id);
@@ -68,43 +78,41 @@ export class GamePage implements OnInit {
         return await modal.present();
     }
 
-    getArray(counter: number) {
+    getArrayOfNumber(counter: number): number[] {
         return new Array(counter);
     }
 
-    getIndex(ri: number, ci: number): number {
+    getIndexOfStone(ri: number, ci: number): number {
         return this.gameMode.rows
             .slice(0, ri)
             .reduce((total, currentValue, currentIndex, array) => {
                 return total + currentValue;
             }, 0) + ci;
-   }
+    }
 
     prepareGame(): void {
         this.timerStatus = GAME_TIMER_STATUS.RESET;
         this.gameService.createStones(this.gameMode).subscribe((stones: Stone[]) => {
-            this.stones = stones;
+            this.stones = produce([], draft => draft = stones);
             this.startGame();
         });
     }
 
-    startCountdown(): void {
-        this.showStones = true;
-        this.showBackdrop = true;
-        this.showCountdown = true;
-    }
-
     startGame(): void {
-        this.showStones = true;
-        this.showBackdrop = false;
-        this.disableStones = false;
-        this.showCountdown = false;
+        this.gameState = produce(this.gameState, draft => {
+            draft.showStones = true;
+            draft.showBackdrop = false;
+            draft.disableStones = false;
+            draft.showCountdown = false;
+        });
     }
 
     stopGame(): void {
-        this.showBackdrop = true;
-        this.disableStones = true;
-        this.showCountdown = false;
+        this.gameState = produce(this.gameState, draft => {
+            draft.showBackdrop = true;
+            draft.disableStones = true;
+            draft.showCountdown = false;
+        });
         this.timerStatus = GAME_TIMER_STATUS.STOP;
 
         const props: HighscoreModalProps = {
@@ -132,10 +140,13 @@ export class GamePage implements OnInit {
         if (this.timerStatus !== GAME_TIMER_STATUS.START) {
             this.timerStatus = GAME_TIMER_STATUS.START;
         }
-
-        this.unflippedStones.push(stone);
+        this.unflippedStones = produce(this.unflippedStones, draft => {
+          draft.push(stone);
+        });
         if (this.unflippedStones.length === this.gameMode.setSize) {
-            this.disableStones = true;
+            this.gameState = produce(this.gameState, draft => {
+                draft.disableStones = true;
+            });
         }
     }
 
@@ -157,33 +168,51 @@ export class GamePage implements OnInit {
 
         // the stones are invalid - flip it back
         if (setIds.length > 1) {
-            const stones: Stone[] = [...this.unflippedStones];
+            const stonesToUpdate: Stone[] = produce(this.unflippedStones, draft => {
+                draft.map((d) => {
+                    d.flipped = true;
+                    d.state = StoneState.flipped;
+                });
+            });
             this.unflippedStones = [];
             setTimeout(() => {
-                stones.forEach((s: Stone) => {
-                    s.flipped = true;
-                    s.state = StoneState.flipped;
+                this.updateStones(stonesToUpdate);
+                this.gameState = produce(this.gameState, draft => {
+                    draft.disableStones = false;
                 });
-                this.disableStones = false;
             }, 400);
             return;
         }
 
         // the stones are valid - remove them from the board
         if (setIds.length === 1 && this.unflippedStones.length === stone.setSize) {
-            const stones: Stone[] = [...this.unflippedStones];
-            stones.forEach((s: Stone) => s.disabled = true);
-            this.unflippedStones = [];
-            this.disableStones = false;
-            setTimeout(() => {
-                stones.forEach((s: Stone) => {
-                    s.found = true;
-                    s.state = StoneState.found;
+            const stonesToUpdate: Stone[] = produce(this.unflippedStones, draft => {
+                draft.map((d) => {
+                    d.disabled = true;
+                    d.found = true;
+                    d.state = StoneState.found;
                 });
+            });
+            this.unflippedStones = [];
+            this.gameState = produce(this.gameState, draft => {
+                draft.disableStones = false;
+            });
+            setTimeout(() => {
+                this.updateStones(stonesToUpdate);
+                this.validateGame();
             }, 400);
         }
 
         this.validateGame();
+    }
+
+    updateStones(stones: Stone[]) {
+        this.stones = produce(this.stones, (draft: Stone[]) => {
+            stones.forEach((s: Stone) => {
+                const index: number = this.stones.findIndex((value: Stone) => value.id === s.id);
+                draft[index] = s;
+            });
+        });
     }
 
     validateGame() {

@@ -1,38 +1,36 @@
-import {Component, OnInit} from '@angular/core';
-import {Store} from '@ngxs/store';
-import {Navigate} from '@ngxs/router-plugin';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {GameMode, User} from '@state/main.models';
 import {ModalController} from '@ionic/angular';
-import {UserModalComponent} from '@app/home/user-modal/user-modal.component';
+import {LogInModalComponent} from '@app/shared/log-in-modal/log-in-modal.component';
 import {GameService} from '@state/game.service';
+import {Dispatch} from '@ngxs-labs/dispatch-decorator';
+import {GoToGame} from '@state/navigation.actions';
+import {MainState} from '@state/main.state';
+import {Select} from '@ngxs/store';
 
 @Component({
     selector: 'app-home',
     templateUrl: 'home.page.html',
     styleUrls: ['home.page.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HomePage implements OnInit {
+export class HomePage {
 
-    games: GameMode[] = this.gameService.getReleasedGames();
-    user: User = this.store.selectSnapshot(s => s.main.user);
+    public readonly games: GameMode[] = this.gameService.getReleasedGames();
 
-    constructor(public store: Store, public gameService: GameService, public modalController: ModalController) {
+    @Select(MainState)
+    public readonly user: User;
 
-    }
+    @Dispatch()
+    public gotoGame = (gameId: string) => new GoToGame(gameId);
 
-    ngOnInit(): void {
-        if (!this.user) {
-            this.showUserModal();
-        }
-    }
+    constructor(public gameService: GameService, public modalController: ModalController) {
 
-    onClick(game: GameMode) {
-        this.store.dispatch(new Navigate(['/game', game.id]));
     }
 
     async showUserModal() {
         const modal = await this.modalController.create({
-            component: UserModalComponent,
+            component: LogInModalComponent,
             cssClass: 'user',
             backdropDismiss: false
         });

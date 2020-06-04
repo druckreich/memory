@@ -13,15 +13,15 @@ export class GameService {
     constructor(public http: HttpClient) {
     }
 
-    getReleasedGames(): GameMode[] {
+    public getReleasedGames(): GameMode[] {
         return GAME_MODES.filter((gameMode: GameMode) => gameMode.released === true);
     }
 
-    getGameModeById(gameModeId: string) {
+    public getGameModeById(gameModeId: string) {
         return GAME_MODES.find((gameMode: GameMode) => gameMode.id === gameModeId);
     }
 
-    createStones(gameMode: GameMode): Observable<Stone[]> {
+    public createStones(gameMode: GameMode): Observable<Stone[]> {
         return this.http.get('assets/icons.json').pipe(
             map((icons: string[]) => {
                 let stones: Stone[] = [];
@@ -29,12 +29,11 @@ export class GameService {
                 for (let i = 0; i < uniqueSets.length; i++) {
                     stones = stones.concat(this.createSet(gameMode.setSize, uniqueSets[i]));
                 }
-                console.log(stones);
                 return this.shuffleArray(stones);
             }));
     }
 
-    createSet(setSize: number, icon: string): Stone[] {
+    private createSet(setSize: number, icon: string): Stone[] {
         const set: Stone[] = [];
         for (let i = 0; i < setSize; i++) {
             set.push({
@@ -55,7 +54,7 @@ export class GameService {
      * Shuffles array in place.
      * @param {Array} a items An array containing the items.
      */
-    shuffleArray(a) {
+    private shuffleArray(a) {
         let j, x, i;
         for (i = a.length - 1; i > 0; i--) {
             j = Math.floor(Math.random() * (i + 1));
@@ -66,7 +65,7 @@ export class GameService {
         return a;
     }
 
-    getRandomElementsFromArray(arr, n) {
+    private getRandomElementsFromArray(arr, n) {
         const result = new Array(n);
         let len = arr.length;
         const taken = new Array(len);

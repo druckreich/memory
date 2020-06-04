@@ -8,7 +8,7 @@
 
 <ion-content [fullscreen]="true">
     <div id="container">
-        <memo-game-button *ngFor="let game of games" [game]="game" (click)="onClick($event)"></memo-game-button>
+        <memo-game-button *ngFor="let game of games" [game]="game" (click)="gotoGame(game.id)"></memo-game-button>
     </div>
 </ion-content>
 

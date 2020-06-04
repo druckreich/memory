@@ -1,9 +1,10 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
 
 @Component({
     selector: 'memo-game-countdown',
     templateUrl: './game-countdown.component.html',
     styleUrls: ['./game-countdown.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameCountdownComponent implements OnInit {
 

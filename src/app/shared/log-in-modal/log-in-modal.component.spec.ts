@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { UserModalComponent } from './user-modal.component';
+import { LogInModalComponent } from './log-in-modal.component';
 
 describe('UserModalComponent', () => {
-  let component: UserModalComponent;
-  let fixture: ComponentFixture<UserModalComponent>;
+  let component: LogInModalComponent;
+  let fixture: ComponentFixture<LogInModalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserModalComponent ],
+      declarations: [ LogInModalComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(UserModalComponent);
+    fixture = TestBed.createComponent(LogInModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
