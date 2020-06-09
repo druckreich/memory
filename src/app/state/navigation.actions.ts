@@ -1,4 +1,3 @@
-import {MainStateModel} from '@state/main.state';
 import {Navigate} from '@ngxs/router-plugin';
 import {StateContext} from '@ngxs/store';
 import {NavigationStateModel} from '@state/navigation.state';

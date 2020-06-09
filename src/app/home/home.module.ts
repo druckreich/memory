@@ -8,7 +8,6 @@ import {HomePageRoutingModule} from './home-routing.module';
 import {GameModeButtonComponent} from '@app/home/game-mode-button/game-mode-button.component';
 
 
-
 @NgModule({
     imports: [
         CommonModule,

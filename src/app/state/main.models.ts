@@ -44,7 +44,6 @@ export interface Game {
 }
 
 
-
 export interface Highscore {
     id?: string;
     username?: string;

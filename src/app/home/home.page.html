@@ -2,7 +2,7 @@
     <ion-toolbar>
         <ion-label>
             <h1>
-            Memory
+                Memory
             </h1>
         </ion-label>
     </ion-toolbar>
@@ -10,7 +10,8 @@
 
 <ion-content [fullscreen]="true">
     <div id="container">
-        <memo-game-mode-button *ngFor="let gameMode of gameModes" [gameMode]="gameMode" (click)="selectGameMode(gameMode)"></memo-game-mode-button>
+        <memo-game-mode-button *ngFor="let gameMode of gameModes" [gameMode]="gameMode"
+                               (click)="selectGameMode(gameMode)"></memo-game-mode-button>
     </div>
 </ion-content>
 

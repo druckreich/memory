@@ -24,11 +24,11 @@ export class GameCountdownComponent implements OnInit {
             countdown--;
             this.label = countdown.toString();
             if (countdown == 0) {
-                this.label = "Go";
+                this.label = 'Go';
                 clearInterval(this.handler);
                 setTimeout(() => this.start.emit(), 750);
             }
-        }, 750)
+        }, 750);
     }
 
 }

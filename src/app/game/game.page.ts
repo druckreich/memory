@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Game, GameMode, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
+import {Game, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
 import {GameService} from '@state/game.service';
 import {GAME_TIMER_STATUS} from './game-timer/game-timer.component';
 import {Store} from '@ngxs/store';
@@ -141,7 +141,7 @@ export class GamePage implements OnInit {
             this.timerStatus = GAME_TIMER_STATUS.START;
         }
         this.unflippedStones = produce(this.unflippedStones, draft => {
-          draft.push(stone);
+            draft.push(stone);
         });
         if (this.unflippedStones.length === this.game.setSize) {
             this.gameState = produce(this.gameState, draft => {
