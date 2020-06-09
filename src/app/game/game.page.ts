@@ -18,7 +18,7 @@ import {produce} from 'immer';
 })
 export class GamePage implements OnInit {
 
-    private readonly gameMode: GameMode;
+    public readonly gameMode: GameMode;
 
     stones: Stone[] = produce([], draft => {
     });

@@ -12,14 +12,14 @@ export const GAME_MODES: GameMode[] = [
         rows: [2, 2]
     },
     {
-        id: 'normal_one',
+        id: 'three_one',
         label: 'normal_one',
         description: '',
         setNumber: 4,
-        setSize: 2,
+        setSize: 3,
         released: true,
         locked: false,
-        rows: [2, 2, 2, 2]
+        rows: [3, 3, 3, 3]
     },
     {
         id: 'normal_two',

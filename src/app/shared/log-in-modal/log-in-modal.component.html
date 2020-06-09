@@ -1,10 +1,10 @@
 <ion-content class="ion-padding">
     <h3>Login</h3>
     <ion-item>
-        <ion-input #username placeholder="name"></ion-input>
+        <ion-input #username type="text" placeholder="name"></ion-input>
     </ion-item>
     <ion-item>
-        <ion-input #password placeholder="password"></ion-input>
+        <ion-input #password type="text" placeholder="password"></ion-input>
     </ion-item>
 
     <div class="ion-padding-top">
@@ -18,7 +18,7 @@
     <ion-row>
         <ion-col>
             <ion-button expand="full" fill="solid" color="light" [disabled]="!username.value || !password.value"
-                        (click)="onSetUser(username.value, password.value)">LOGIN
+                        (click)="onSetUser(username.value.toString(), password.value.toString())">LOGIN
             </ion-button>
         </ion-col>
         <ion-col>
