@@ -5,7 +5,8 @@ import {FormsModule} from '@angular/forms';
 import {HomePage} from './home.page';
 
 import {HomePageRoutingModule} from './home-routing.module';
-import {GameButtonComponent} from './game-button/game-button.component';
+import {GameModeButtonComponent} from '@app/home/game-mode-button/game-mode-button.component';
+
 
 
 @NgModule({
@@ -17,7 +18,7 @@ import {GameButtonComponent} from './game-button/game-button.component';
     ],
     declarations: [
         HomePage,
-        GameButtonComponent
+        GameModeButtonComponent
     ],
     entryComponents: []
 })

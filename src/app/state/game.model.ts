@@ -1,74 +1,98 @@
-import {GameMode} from '@state/main.models';
+import {Game, GameMode} from '@state/main.models';
 
 export const GAME_MODES: GameMode[] = [
+    {id: 'autumn', label: 'Ein freundliche Spiel Memory', description: 'Ein freundliche Spiel Memory'}
+];
+
+export const GAMES: Game[] = [
     {
-        id: 'normal_test',
-        label: 'Playground',
-        description: '',
-        setNumber: 2,
-        setSize: 2,
-        released: true,
-        locked: false,
-        rows: [2, 2]
-    },
-    {
-        id: 'three_one',
-        label: 'normal_one',
+        id: 'autumn_easy',
+        label: 'autumn_easy',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === 'autumn'),
         description: '',
         setNumber: 4,
-        setSize: 3,
-        released: true,
-        locked: false,
-        rows: [3, 3, 3, 3]
-    },
-    {
-        id: 'normal_two',
-        label: 'normal_two',
-        description: '',
-        setNumber: 5,
         setSize: 2,
         released: true,
         locked: false,
-        rows: [3, 4, 3]
+        rows: [1, 2, 2, 2, 1]
     },
     {
-        id: 'normal_three',
-        label: 'normal_three',
+        id: 'autumn_normal',
+        label: 'autumn_normal',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === 'autumn'),
         description: '',
         setNumber: 6,
         setSize: 2,
         released: true,
         locked: false,
-        rows: [2, 3, 2, 3, 2]
+        rows: [3, 3, 3, 3]
     },
     {
-        id: 'normal_four',
-        label: 'normal_four',
-        description: '',
-        setNumber: 7,
-        setSize: 2,
-        released: true,
-        locked: true,
-        rows: [3, 4, 4, 3]
-    },
-    {
-        id: 'normal_five',
-        label: 'normal_five',
-        description: '',
-        setNumber: 8,
-        setSize: 2,
-        released: true,
-        locked: true,
-        rows: [1, 2, 3, 4, 3, 2, 1]
-    },
-    {
-        id: 'normal_six',
-        label: 'normal_six',
+        id: 'autumn_hard',
+        label: 'autumn_hard',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === 'autumn'),
         description: '',
         setNumber: 9,
         setSize: 2,
         released: true,
+        locked: false,
+        rows: [2, 3, 4, 4, 3, 2]
+    },
+    {
+        id: 'autumn_nightmare',
+        label: 'autumn_nightmare',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === 'autumn'),
+        description: '',
+        setNumber: 12,
+        setSize: 2,
+        released: true,
         locked: true,
-        rows: [3, 4, 4, 4, 3]
+        rows: [3, 4, 5, 5, 4, 3]
+    },
+    {
+        id: 'autumn_hell',
+        label: 'autumn_hell',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === 'autumn'),
+        description: '',
+        setNumber: 15,
+        setSize: 2,
+        released: true,
+        locked: true,
+        rows: [3, 4, 5, 6, 5, 4, 3]
+    },
+    {
+        id: 'autumn_insane',
+        label: 'autumn_insane',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === 'autumn'),
+        description: '',
+        setNumber: 18,
+        setSize: 2,
+        released: true,
+        locked: true,
+        rows: [4, 5, 6, 6, 6, 5, 4]
+    },
+    {
+        id: 'autumn_horror',
+        label: 'autumn_horror',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === 'autumn'),
+        description: '',
+        setNumber: 21,
+        setSize: 2,
+        released: true,
+        locked: true,
+        rows: [6, 6, 6, 6, 6, 6, 6]
+    },
+    {
+        id: 'autumn_madness',
+        label: 'autumn_madness',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === 'autumn'),
+        description: '',
+        setNumber: 24,
+        setSize: 2,
+        released: true,
+        locked: true,
+        rows: [6, 6, 6, 6, 6, 6, 6, 6]
     }
 ];
+
+

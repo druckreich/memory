@@ -17,6 +17,10 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
+  },
+  {
+    path: 'game-select',
+    loadChildren: () => import('./game-select/game-select.module').then( m => m.GameSelectPageModule)
   }
 ];
 

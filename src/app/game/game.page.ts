@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {GameMode, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
+import {Game, GameMode, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
 import {GameService} from '@state/game.service';
 import {GAME_TIMER_STATUS} from './game-timer/game-timer.component';
 import {Store} from '@ngxs/store';
@@ -18,7 +18,7 @@ import {produce} from 'immer';
 })
 export class GamePage implements OnInit {
 
-    public readonly gameMode: GameMode;
+    public readonly game: Game;
 
     stones: Stone[] = produce([], draft => {
     });
@@ -43,17 +43,17 @@ export class GamePage implements OnInit {
                 public modalController: ModalController) {
 
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
-        this.gameMode = this.gameService.getGameModeById(gameModeId);
+        this.game = this.gameService.getGameById(gameModeId);
 
     }
 
     ngOnInit() {
 
         // set up user stats for this game mode
-        this.firebaseService.setUserStatsIfNotExists(this.gameMode.id);
+        this.firebaseService.setUserStatsIfNotExists(this.game.id);
 
         const props: HighscoreModalProps = {
-            gameMode: this.gameMode,
+            gameMode: this.game,
             updateGameStats: true,
             updateHighscore: false
         };
@@ -83,7 +83,7 @@ export class GamePage implements OnInit {
     }
 
     getIndexOfStone(ri: number, ci: number): number {
-        return this.gameMode.rows
+        return this.game.rows
             .slice(0, ri)
             .reduce((total, currentValue, currentIndex, array) => {
                 return total + currentValue;
@@ -92,7 +92,7 @@ export class GamePage implements OnInit {
 
     prepareGame(): void {
         this.timerStatus = GAME_TIMER_STATUS.RESET;
-        this.gameService.createStones(this.gameMode).subscribe((stones: Stone[]) => {
+        this.gameService.createStones(this.game).subscribe((stones: Stone[]) => {
             this.stones = produce([], draft => draft = stones);
             this.startGame();
         });
@@ -116,7 +116,7 @@ export class GamePage implements OnInit {
         this.timerStatus = GAME_TIMER_STATUS.STOP;
 
         const props: HighscoreModalProps = {
-            gameMode: this.gameMode,
+            gameMode: this.game,
             highscore: {score: this.milliseconds} as Highscore,
             updateHighscore: true,
             updateGameStats: true
@@ -143,7 +143,7 @@ export class GamePage implements OnInit {
         this.unflippedStones = produce(this.unflippedStones, draft => {
           draft.push(stone);
         });
-        if (this.unflippedStones.length === this.gameMode.setSize) {
+        if (this.unflippedStones.length === this.game.setSize) {
             this.gameState = produce(this.gameState, draft => {
                 draft.disableStones = true;
             });
@@ -158,7 +158,7 @@ export class GamePage implements OnInit {
 
     // flip animation ends
     onStoneUnflipped(stone: Stone): void {
-        if (this.unflippedStones.length < this.gameMode.setSize) {
+        if (this.unflippedStones.length < this.game.setSize) {
             return;
         }
 

@@ -10,7 +10,7 @@
 
 <ion-content [fullscreen]="true">
     <div id="container">
-        <memo-game-button *ngFor="let game of games" [game]="game" (click)="gotoGame(game.id)"></memo-game-button>
+        <memo-game-mode-button *ngFor="let gameMode of gameModes" [gameMode]="gameMode" (click)="selectGameMode(gameMode)"></memo-game-mode-button>
     </div>
 </ion-content>
 

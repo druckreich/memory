@@ -9,7 +9,7 @@
 <ion-content #content class="ion-padding" [scrollY]="false" [scrollX]="false">
     <div class="game">
         <div #board class="board">
-            <div class="row" *ngFor="let r of gameMode.rows; let ri = index">
+            <div class="row" *ngFor="let r of game.rows; let ri = index">
                 <div class="col" *ngFor="let c of getArrayOfNumber(r); let ci = index">
                     <div class="stone">
                         <memo-game-stone *ngIf="gameState.showStones"

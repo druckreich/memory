@@ -1,0 +1,15 @@
+<ion-header [translucent]="true" class="ion-no-border ion-padding">
+  <ion-toolbar>
+    <ion-label>
+      <h1>
+        Memory
+      </h1>
+    </ion-label>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div id="container">
+    <memo-game-button *ngFor="let game of games" [game]="game" (click)="selectGame(game)"></memo-game-button>
+  </div>
+</ion-content>

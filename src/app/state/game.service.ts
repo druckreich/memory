@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {GameMode, Stone, StoneState} from './main.models';
+import {Game, GameMode, Stone, StoneState} from './main.models';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {GAME_MODES} from '@state/game.model';
+import {GAME_MODES, GAMES} from '@state/game.model';
 
 @Injectable({
     providedIn: 'root'
@@ -13,21 +13,33 @@ export class GameService {
     constructor(public http: HttpClient) {
     }
 
-    public getReleasedGames(): GameMode[] {
-        return GAME_MODES.filter((gameMode: GameMode) => gameMode.released === true);
+    public getGameModes(): GameMode[] {
+        return GAME_MODES;
     }
 
-    public getGameModeById(gameModeId: string) {
-        return GAME_MODES.find((gameMode: GameMode) => gameMode.id === gameModeId);
+    public getGameModeId(gameModeId: string): GameMode {
+        return GAME_MODES.find((gm: GameMode) => gm.id === gameModeId);
     }
 
-    public createStones(gameMode: GameMode): Observable<Stone[]> {
+    public getReleasedGames(): Game[] {
+        return GAMES.filter((game: Game) => game.released === true);
+    }
+
+    public getGamesByGameModeId(gameModeId: string): Game[] {
+        return GAMES.filter((game: Game) => game.gameMode.id === gameModeId);
+    }
+
+    public getGameById(gameId: string) {
+        return GAMES.find((game: Game) => game.id === gameId);
+    }
+
+    public createStones(game: Game): Observable<Stone[]> {
         return this.http.get('assets/icons.json').pipe(
             map((icons: string[]) => {
                 let stones: Stone[] = [];
-                const uniqueSets: string[] = this.getRandomElementsFromArray(icons, gameMode.setNumber);
+                const uniqueSets: string[] = this.getRandomElementsFromArray(icons, game.setNumber);
                 for (let i = 0; i < uniqueSets.length; i++) {
-                    stones = stones.concat(this.createSet(gameMode.setSize, uniqueSets[i]));
+                    stones = stones.concat(this.createSet(game.setSize, uniqueSets[i]));
                 }
                 return this.shuffleArray(stones);
             }));

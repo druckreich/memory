@@ -29,12 +29,21 @@ export interface GameMode {
     id: string;
     label: string;
     description: string;
+}
+
+export interface Game {
+    id: string;
+    label: string;
+    gameMode: GameMode;
+    description: string;
     setNumber: number;
     setSize: number;
     released: boolean;
     locked: boolean;
     rows?: number[];
 }
+
+
 
 export interface Highscore {
     id?: string;
