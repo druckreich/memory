@@ -1,14 +1,15 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Game, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
+import {Game, GameStats, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
 import {GameService} from '@state/game.service';
 import {GAME_TIMER_STATUS} from './game-timer/game-timer.component';
 import {Store} from '@ngxs/store';
 import {ModalController} from '@ionic/angular';
 import {GameHighscoreModalComponent} from '@app/game/game-highscore-modal/game-highscore-modal.component';
-import {Navigate} from '@ngxs/router-plugin';
 import {FirebaseService} from '@state/firebase.service';
 import {produce} from 'immer';
+import {GoToHome} from '@state/navigation.actions';
+import {Observable, Subscription} from 'rxjs';
 
 @Component({
     selector: 'memo-game',
@@ -16,7 +17,7 @@ import {produce} from 'immer';
     styleUrls: ['./game.page.scss'],
     changeDetection: ChangeDetectionStrategy.Default
 })
-export class GamePage implements OnInit {
+export class GamePage {
 
     public readonly game: Game;
 
@@ -26,15 +27,14 @@ export class GamePage implements OnInit {
     unflippedStones: Stone[] = produce([], draft => {
     });
 
-    gameState: any = {
-        showStones: false,
-        disableStones: false,
-        showBackdrop: false,
-        showCountdown: false
-    };
-
+    showStones = false;
+    disableStones = false;
+    showBackdrop = false;
+    showCountdown = false;
     timerStatus: GAME_TIMER_STATUS = GAME_TIMER_STATUS.STOP;
     milliseconds: number;
+
+    private gameStats: GameStats;
 
     constructor(public activatedRoute: ActivatedRoute,
                 public store: Store,
@@ -44,53 +44,53 @@ export class GamePage implements OnInit {
 
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
         this.game = this.gameService.getGameById(gameModeId);
-
     }
 
-    ngOnInit() {
+    ionViewWillEnter() {
+        this.loadGameStats();
+    }
 
-        // set up user stats for this game mode
-        this.firebaseService.setUserStatsIfNotExists(this.game.id);
+    loadGameStats(): void {
+        const subscription: Subscription = this.firebaseService.getUserStats(this.game.id)
+            .subscribe((gs: GameStats) => {
+                if (gs) {
+                    this.gameStats = gs;
+                    this.onPageStartUp();
+                    subscription.unsubscribe();
+                } else {
+                    this.firebaseService.setUserStats(this.game.id, {completed: 0, started: 0, moves: 0});
+                }
+            });
+    }
 
+    onPageStartUp() {
         const props: HighscoreModalProps = {
-            gameMode: this.game,
-            updateGameStats: true,
-            updateHighscore: false
+            game: this.game,
+            showedAfterGame: false,
+            highscore$: this.getHighscore(),
+            localHighscore$: null
         };
-        this.showHighscoreModal(props, (data) => {
-            if (data.data === 'retry') {
-                this.prepareGame();
-            }
-
-            if (data.data === 'main') {
-                this.store.dispatch(new Navigate(['/home']));
-            }
-        });
+        this.showHighscoreModal(props);
     }
 
-    async showHighscoreModal(props: HighscoreModalProps, dismissHandler: any) {
+    async showHighscoreModal(props: HighscoreModalProps) {
         const modal = await this.modalController.create({
             component: GameHighscoreModalComponent,
             cssClass: 'highscore',
             componentProps: props
         });
-        modal.onDidDismiss().then((data) => dismissHandler(data));
+        modal.onDidDismiss().then((data) => {
+            if (data.data === 'start') {
+                this.prepareGame();
+            }
+            if (data.data === 'main') {
+                this.store.dispatch(new GoToHome());
+            }
+        });
         return await modal.present();
     }
 
-    getArrayOfNumber(counter: number): number[] {
-        return new Array(counter);
-    }
-
-    getIndexOfStone(ri: number, ci: number): number {
-        return this.game.rows
-            .slice(0, ri)
-            .reduce((total, currentValue, currentIndex, array) => {
-                return total + currentValue;
-            }, 0) + ci;
-    }
-
-    prepareGame(): void {
+    private prepareGame(): void {
         this.timerStatus = GAME_TIMER_STATUS.RESET;
         this.gameService.createStones(this.game).subscribe((stones: Stone[]) => {
             this.stones = produce([], draft => draft = stones);
@@ -98,37 +98,27 @@ export class GamePage implements OnInit {
         });
     }
 
-    startGame(): void {
-        this.gameState = produce(this.gameState, draft => {
-            draft.showStones = true;
-            draft.showBackdrop = false;
-            draft.disableStones = false;
-            draft.showCountdown = false;
-        });
+    private startGame(): void {
+        this.showStones = true;
+        this.showBackdrop = false;
+        this.disableStones = false;
+        this.showCountdown = false;
     }
 
-    stopGame(): void {
-        this.gameState = produce(this.gameState, draft => {
-            draft.showBackdrop = true;
-            draft.disableStones = true;
-            draft.showCountdown = false;
-        });
+    private stopGame(): void {
+        this.showBackdrop = true;
+        this.disableStones = true;
+        this.showCountdown = false;
         this.timerStatus = GAME_TIMER_STATUS.STOP;
 
-        const props: HighscoreModalProps = {
-            gameMode: this.game,
-            highscore: {score: this.milliseconds} as Highscore,
-            updateHighscore: true,
-            updateGameStats: true
-        };
-        this.showHighscoreModal(props, (data) => {
-            if (data.data === 'retry') {
-                this.prepareGame();
-            }
+        this.gameStats.completed++;
+        this.updateGameStats(this.gameStats);
 
-            if (data.data === 'main') {
-                this.store.dispatch(new Navigate(['/home']));
-            }
+        this.showHighscoreModal({
+            game: this.game,
+            showedAfterGame: true,
+            highscore$: this.getHighscore(),
+            localHighscore$: this.updateHighscore(this.milliseconds)
         });
     }
 
@@ -136,17 +126,17 @@ export class GamePage implements OnInit {
         this.milliseconds = ms;
     }
 
-    onStoneTabbed(stone: Stone): void {
+    private onStoneTabbed(stone: Stone): void {
         if (this.timerStatus !== GAME_TIMER_STATUS.START) {
             this.timerStatus = GAME_TIMER_STATUS.START;
+            this.gameStats.started++;
         }
         this.unflippedStones = produce(this.unflippedStones, draft => {
             draft.push(stone);
         });
         if (this.unflippedStones.length === this.game.setSize) {
-            this.gameState = produce(this.gameState, draft => {
-                draft.disableStones = true;
-            });
+            this.gameStats.moves++;
+            this.disableStones = true;
         }
     }
 
@@ -177,9 +167,7 @@ export class GamePage implements OnInit {
             this.unflippedStones = [];
             setTimeout(() => {
                 this.updateStones(stonesToUpdate);
-                this.gameState = produce(this.gameState, draft => {
-                    draft.disableStones = false;
-                });
+                this.disableStones = false;
             }, 400);
             return;
         }
@@ -194,9 +182,7 @@ export class GamePage implements OnInit {
                 });
             });
             this.unflippedStones = [];
-            this.gameState = produce(this.gameState, draft => {
-                draft.disableStones = false;
-            });
+            this.disableStones = false;
             setTimeout(() => {
                 this.updateStones(stonesToUpdate);
                 this.validateGame();
@@ -206,7 +192,7 @@ export class GamePage implements OnInit {
         this.validateGame();
     }
 
-    updateStones(stones: Stone[]) {
+    private updateStones(stones: Stone[]) {
         this.stones = produce(this.stones, (draft: Stone[]) => {
             stones.forEach((s: Stone) => {
                 const index: number = this.stones.findIndex((value: Stone) => value.id === s.id);
@@ -215,10 +201,34 @@ export class GamePage implements OnInit {
         });
     }
 
-    validateGame() {
+    private validateGame() {
         const notFound: Stone = this.stones.find((s: Stone) => s.disabled === false);
         if (notFound == null) {
             this.stopGame();
         }
+    }
+
+    numberToArray(counter: number): number[] {
+        return new Array(counter);
+    }
+
+    matrixToIndex(ri: number, ci: number): number {
+        return this.game.rows
+            .slice(0, ri)
+            .reduce((total, currentValue, currentIndex, array) => {
+                return total + currentValue;
+            }, 0) + ci;
+    }
+
+    getHighscore(): Observable<Highscore[]> {
+        return this.firebaseService.getHighscore(this.game.id, true, 10);
+    }
+
+    updateHighscore(milliseconds: number): Promise<Highscore> {
+        return this.firebaseService.setHighscore(this.game.id, milliseconds);
+    }
+
+    updateGameStats(stats: GameStats): Observable<GameStats> {
+        return this.firebaseService.updateGameStats(this.game.id, stats);
     }
 }

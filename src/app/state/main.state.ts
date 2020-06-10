@@ -31,7 +31,6 @@ export class MainState {
     @Action(SetUser)
     setUser(ctx: StateContext<MainStateModel>, action: SetUser) {
         action.execute(ctx, action);
-
     }
 }
 

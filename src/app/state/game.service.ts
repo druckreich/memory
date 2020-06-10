@@ -21,10 +21,6 @@ export class GameService {
         return GAME_MODES.find((gm: GameMode) => gm.id === gameModeId);
     }
 
-    public getReleasedGames(): Game[] {
-        return GAMES.filter((game: Game) => game.released === true);
-    }
-
     public getGamesByGameModeId(gameModeId: string): Game[] {
         return GAMES.filter((game: Game) => game.gameMode.id === gameModeId);
     }

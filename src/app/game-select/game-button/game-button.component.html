@@ -4,7 +4,10 @@
             {{game.id}}
         </ion-card-title>
         <ion-card-subtitle>
-            <ion-text>{{game.label}}</ion-text>
+            <ion-text>{{game.gameMode.description}}</ion-text>
         </ion-card-subtitle>
     </ion-card-header>
+    <ion-card-content>
+        <ion-text>Sets: {{game.setNumber}} SetSize: {{game.setSize}}</ion-text>
+    </ion-card-content>
 </ion-card>

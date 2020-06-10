@@ -1,3 +1,5 @@
+import {Observable} from 'rxjs';
+
 export enum StoneState {
     flipped = 'flipped',
     unflipped = 'unflipped',
@@ -38,8 +40,6 @@ export interface Game {
     description: string;
     setNumber: number;
     setSize: number;
-    released: boolean;
-    locked: boolean;
     rows?: number[];
 }
 
@@ -51,8 +51,9 @@ export interface Highscore {
 }
 
 export interface GameStats {
-    id?: string;
+    started?: number;
     completed?: number;
+    moves?: number;
 }
 
 export interface User {
@@ -62,9 +63,8 @@ export interface User {
 }
 
 export interface HighscoreModalProps {
-    gameMode: GameMode;
-    highscore?: Highscore;
-    updateHighscore: boolean;
-    gameStats?: GameStats;
-    updateGameStats: boolean;
+    game: GameMode;
+    localHighscore$?: Promise<Highscore>;
+    highscore$?: Observable<Highscore[]>;
+    showedAfterGame: boolean;
 }

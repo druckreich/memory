@@ -27,7 +27,7 @@ export class LogInModalComponent implements OnInit {
 
     onSetUser(username: string, password: string) {
         const user: User = {username, password};
-        this.firebaseService.checkUser(user.username).subscribe((u: User) => {
+        this.firebaseService.userExists(user.username).subscribe((u: User) => {
             // username exists and password is the same -> login
             if (u) {
                 if (u.password === password) {

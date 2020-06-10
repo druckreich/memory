@@ -1,9 +1,7 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import {GameMode, GameStats, Highscore} from '@state/main.models';
-import {FirebaseService} from '@state/firebase.service';
-import {Observable, Subscription} from 'rxjs';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {GameMode, Highscore} from '@state/main.models';
+import {Observable} from 'rxjs';
 import {ModalController} from '@ionic/angular';
-import {map} from 'rxjs/operators';
 
 @Component({
     selector: 'memo-game-highscore-modal',
@@ -11,76 +9,32 @@ import {map} from 'rxjs/operators';
     styleUrls: ['./game-highscore-modal.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GameHighscoreModalComponent implements OnInit {
+export class GameHighscoreModalComponent implements OnInit, OnChanges {
 
     @Input()
-    gameMode: GameMode;
+    game: GameMode;
 
     @Input()
-    highscore: Highscore;
+    highscore$: Observable<Highscore[]>;
 
     @Input()
-    updateHighscore: boolean;
+    localHighscore$: Promise<Highscore>;
 
     @Input()
-    stats: GameStats;
+    showedAfterGame: boolean;
 
-    @Input()
-    updateGameStats: boolean;
+    constructor(public modalController: ModalController) {
 
-    remoteHighscores$: Observable<Highscore[]>;
-
-    constructor(public modalController: ModalController, public firebaseService: FirebaseService) {
     }
 
     ngOnInit() {
-        this.loadUserStats();
-        this.loadHighscores();
     }
 
-    loadUserStats() {
-        const subscription: Subscription = this.firebaseService.getUserStats(this.gameMode.id).subscribe(
-            (stats: GameStats) => {
-                if (!this.updateGameStats) {
-                    this.setUserStats(stats);
-                }
-                subscription.unsubscribe();
-            });
+    ngOnChanges(changes: SimpleChanges): void {
     }
 
-    setUserStats(stats: GameStats) {
-        /*
-        stats.completed = stats.completed ? stats.completed++ : 0;
-        this.firebaseService.setUserStats(this.gameMode.id, stats);
-        console.log(stats);
-         */
-    }
-
-    loadHighscores(): void {
-        let highscores$ = this.firebaseService.getHighscore(this.gameMode.id, true, 10);
-        if (this.updateHighscore) {
-            highscores$ = highscores$.pipe(
-                map((highscores: Highscore[]) => {
-                    return this.setHighscore(highscores, this.highscore);
-                })
-            );
-        }
-        this.remoteHighscores$ = highscores$;
-    }
-
-    setHighscore(highscores: Highscore[], highscore: Highscore): Highscore[] {
-        if (highscores.length === 0 || highscores.length < 10 || this.highscore.score < highscores[highscores.length - 1].score) {
-            this.firebaseService.setHighscore(this.gameMode.id, this.highscore).then(data => {
-                this.highscore.id = data.id;
-            });
-            highscores.push(highscore);
-            highscores = highscores.sort((a: Highscore, b: Highscore) => a.score - b.score);
-        }
-        return highscores;
-    }
-
-    onRetry(): void {
-        this.modalController.dismiss('retry');
+    onStart(): void {
+        this.modalController.dismiss('start');
     }
 
     onMain(): void {

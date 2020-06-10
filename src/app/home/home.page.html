@@ -8,10 +8,8 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-    <div id="container">
+<ion-content [fullscreen]="true" class="ion-padding">
         <memo-game-mode-button *ngFor="let gameMode of gameModes" [gameMode]="gameMode"
                                (click)="selectGameMode(gameMode)"></memo-game-mode-button>
-    </div>
 </ion-content>
 

@@ -24,3 +24,17 @@ export class GoToGame {
 
     }
 }
+
+export class GoToGameSelect {
+    static readonly type = '[Navigation] GoToGameSelect';
+
+    constructor(public gameId: string) {
+    }
+
+    public execute({dispatch}: StateContext<NavigationStateModel>, action: GoToGame) {
+        dispatch(new Navigate(['game-select', action.gameId]));
+
+    }
+}
+
+

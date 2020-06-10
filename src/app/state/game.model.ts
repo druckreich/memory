@@ -1,7 +1,11 @@
 import {Game, GameMode} from '@state/main.models';
 
 export const GAME_MODES: GameMode[] = [
-    {id: 'autumn', label: 'Ein freundliche Spiel Memory', description: 'Ein freundliche Spiel Memory'}
+    {
+        id: 'autumn',
+        label: 'Ein freundliche Spiel Memory',
+        description: 'Ein freundliche Spiel Memory'
+    }
 ];
 
 export const GAMES: Game[] = [
@@ -12,8 +16,6 @@ export const GAMES: Game[] = [
         description: '',
         setNumber: 4,
         setSize: 2,
-        released: true,
-        locked: false,
         rows: [1, 2, 2, 2, 1]
     },
     {
@@ -23,8 +25,6 @@ export const GAMES: Game[] = [
         description: '',
         setNumber: 6,
         setSize: 2,
-        released: true,
-        locked: false,
         rows: [3, 3, 3, 3]
     },
     {
@@ -34,8 +34,6 @@ export const GAMES: Game[] = [
         description: '',
         setNumber: 9,
         setSize: 2,
-        released: true,
-        locked: false,
         rows: [2, 3, 4, 4, 3, 2]
     },
     {
@@ -45,8 +43,6 @@ export const GAMES: Game[] = [
         description: '',
         setNumber: 12,
         setSize: 2,
-        released: true,
-        locked: true,
         rows: [3, 4, 5, 5, 4, 3]
     },
     {
@@ -56,8 +52,6 @@ export const GAMES: Game[] = [
         description: '',
         setNumber: 15,
         setSize: 2,
-        released: true,
-        locked: true,
         rows: [3, 4, 5, 6, 5, 4, 3]
     },
     {
@@ -67,8 +61,6 @@ export const GAMES: Game[] = [
         description: '',
         setNumber: 18,
         setSize: 2,
-        released: true,
-        locked: true,
         rows: [4, 5, 6, 6, 6, 5, 4]
     },
     {
@@ -78,8 +70,6 @@ export const GAMES: Game[] = [
         description: '',
         setNumber: 21,
         setSize: 2,
-        released: true,
-        locked: true,
         rows: [6, 6, 6, 6, 6, 6, 6]
     },
     {
@@ -89,8 +79,6 @@ export const GAMES: Game[] = [
         description: '',
         setNumber: 24,
         setSize: 2,
-        released: true,
-        locked: true,
         rows: [6, 6, 6, 6, 6, 6, 6, 6]
     }
 ];

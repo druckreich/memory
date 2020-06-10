@@ -1,20 +1,21 @@
 <ion-header>
     <ion-toolbar class="ion-padding-horizontal">
+        <ion-item slot="start">M: {{gameStats?.moves}} S: {{gameStats?.started}} C: {{gameStats?.completed}}</ion-item>
         <memo-game-timer class="ion-float-end" [status]="timerStatus" (tick)="onTick($event)"></memo-game-timer>
     </ion-toolbar>
 </ion-header>
 
-<ion-backdrop *ngIf="gameState.showBackdrop"></ion-backdrop>
+<ion-backdrop *ngIf="showBackdrop"></ion-backdrop>
 
 <ion-content #content class="ion-padding" [scrollY]="false" [scrollX]="false">
     <div class="game">
         <div #board class="board">
             <div class="row" *ngFor="let r of game.rows; let ri = index">
-                <div class="col" *ngFor="let c of getArrayOfNumber(r); let ci = index">
+                <div class="col" *ngFor="let c of numberToArray(r); let ci = index">
                     <div class="stone">
-                        <memo-game-stone *ngIf="gameState.showStones"
-                                         [stone]="stones[getIndexOfStone(ri, ci)]"
-                                         [disabled]="gameState.disableStones"
+                        <memo-game-stone *ngIf="showStones"
+                                         [stone]="stones[matrixToIndex(ri, ci)]"
+                                         [disabled]="disableStones"
                                          (tabbed)="onStoneTabbed($event)"
                                          (flipped)="onStoneFlipped($event)"
                                          (unflipped)="onStoneUnflipped($event)"
@@ -24,5 +25,5 @@
             </div>
         </div>
     </div>
-    <memo-game-countdown #countdown *ngIf="gameState.showCountdown" (start)="startGame()"></memo-game-countdown>
+    <memo-game-countdown #countdown *ngIf="showCountdown" (start)="startGame()"></memo-game-countdown>
 </ion-content>

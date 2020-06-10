@@ -1,4 +1,4 @@
-<ion-header [translucent]="true" class="ion-no-border ion-padding">
+<ion-header [translucent]="false" class="ion-no-border ion-padding">
     <ion-toolbar>
         <ion-label>
             <h1>
@@ -8,8 +8,6 @@
     </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-    <div id="container">
-        <memo-game-button *ngFor="let game of games" [game]="game" (click)="selectGame(game)"></memo-game-button>
-    </div>
+<ion-content [fullscreen]="true" class="ion-padding">
+    <memo-game-button *ngFor="let game of games" [game]="game" (click)="selectGame(game)"></memo-game-button>
 </ion-content>
