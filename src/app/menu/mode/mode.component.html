@@ -1,0 +1,25 @@
+<ion-header [translucent]="true" class="ion-no-border ion-padding-top ion-padding-start ion-padding-end">
+    <ion-toolbar>
+        <ion-label>
+            <h1>
+                Schwierigkeit
+            </h1>
+        </ion-label>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <ion-card *ngFor="let game of games" (click)="selectGame(game)">
+        <ion-card-header>
+            <ion-card-title>
+                {{game.id}}
+            </ion-card-title>
+            <ion-card-subtitle>
+                <ion-text>{{game.gameMode.description}}</ion-text>
+            </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-text>Sets: {{game.setNumber}} SetSize: {{game.setSize}}</ion-text>
+        </ion-card-content>
+    </ion-card>
+</ion-content>

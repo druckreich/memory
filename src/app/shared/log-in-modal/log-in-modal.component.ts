@@ -15,7 +15,9 @@ export class LogInModalComponent implements OnInit {
 
     invalid = false;
 
-    constructor(public store: Store, public firebaseService: FirebaseService, public modalController: ModalController) {
+    constructor(public store: Store,
+                public firebaseService: FirebaseService,
+                public modalController: ModalController) {
     }
 
     ngOnInit() {

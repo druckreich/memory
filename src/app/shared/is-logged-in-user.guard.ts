@@ -45,7 +45,6 @@ export class IsLoggedInUserGuard implements CanActivate {
 
         return await modal.onDidDismiss().then(
             (data) => {
-                console.log(data);
                 return !!data.data ? true : false;
             }
         );

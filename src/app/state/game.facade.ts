@@ -4,13 +4,27 @@ import {Game, GameMode, Stone, StoneState} from './main.models';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {GAME_MODES, GAMES} from '@state/game.model';
+import {Store} from '@ngxs/store';
+import {Navigate} from '@ngxs/router-plugin';
 
 @Injectable({
     providedIn: 'root'
 })
-export class GameService {
+export class GameFacade {
 
-    constructor(public http: HttpClient) {
+    constructor(public store: Store, public http: HttpClient) {
+    }
+
+    navigateToMenu() {
+        this.store.dispatch(new Navigate(['menu']));
+    }
+
+    navigateToGame(id: string) {
+        this.store.dispatch(new Navigate(['game', id]));
+    }
+
+    navigateToGameSelect(id: string) {
+        this.store.dispatch(new Navigate(['menu', id]));
     }
 
     public getGameModes(): GameMode[] {
@@ -87,4 +101,6 @@ export class GameService {
         }
         return result;
     }
+
+
 }

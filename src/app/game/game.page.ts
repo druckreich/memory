@@ -1,14 +1,13 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Game, GameStats, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
-import {GameService} from '@state/game.service';
+import {GameFacade} from '@state/game.facade';
 import {GAME_TIMER_STATUS} from './game-timer/game-timer.component';
 import {Store} from '@ngxs/store';
 import {ModalController} from '@ionic/angular';
 import {GameHighscoreModalComponent} from '@app/game/game-highscore-modal/game-highscore-modal.component';
 import {FirebaseService} from '@state/firebase.service';
 import {produce} from 'immer';
-import {GoToHome} from '@state/navigation.actions';
 import {Observable, Subscription} from 'rxjs';
 
 @Component({
@@ -39,8 +38,9 @@ export class GamePage {
     constructor(public activatedRoute: ActivatedRoute,
                 public store: Store,
                 public firebaseService: FirebaseService,
-                public gameService: GameService,
-                public modalController: ModalController) {
+                public gameService: GameFacade,
+                public modalController: ModalController,
+                public gameFacade: GameFacade) {
 
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
         this.game = this.gameService.getGameById(gameModeId);
@@ -84,7 +84,7 @@ export class GamePage {
                 this.prepareGame();
             }
             if (data.data === 'main') {
-                this.store.dispatch(new GoToHome());
+                this.gameFacade.navigateToMenu();
             }
         });
         return await modal.present();
