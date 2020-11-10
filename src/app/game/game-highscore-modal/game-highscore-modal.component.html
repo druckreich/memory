@@ -1,5 +1,5 @@
 <ion-content class="ion-padding-horizontal">
-    <h3>{{game.label}}</h3>
+    <h3>{{game.label | uppercase}}</h3>
     <ion-grid *ngIf="highscore$ | async as highscore">
         <ion-row>
             <ion-col size="2" class="ion-text-right ion-text-nowrap">RANK</ion-col>

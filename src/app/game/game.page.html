@@ -1,7 +1,7 @@
 <ion-header>
     <ion-toolbar class="ion-padding-horizontal">
-        <ion-item slot="start">Zug: {{gameStats?.moves}}</ion-item>
-        <memo-game-timer class="ion-float-end" [status]="timerStatus" (tick)="onTick($event)"></memo-game-timer>
+        <label slot="start">Zug: {{gameStats?.moves}}</label>
+        <memo-game-timer slot="end" [status]="timerStatus" (tick)="onTick($event)"></memo-game-timer>
     </ion-toolbar>
 </ion-header>
 

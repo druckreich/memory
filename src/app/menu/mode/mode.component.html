@@ -10,14 +10,10 @@
     <ion-card *ngFor="let game of games" (click)="selectGame(game)">
         <ion-card-header>
             <ion-card-title>
-                {{game.id}}
+                {{game.label |  uppercase}}
+                {{game.setNumber}} x {{game.setSize}}
             </ion-card-title>
-            <ion-card-subtitle>
-                <ion-text>{{game.gameMode.description}}</ion-text>
-            </ion-card-subtitle>
         </ion-card-header>
-        <ion-card-content>
-            <ion-text>Sets: {{game.setNumber}} SetSize: {{game.setSize}}</ion-text>
-        </ion-card-content>
     </ion-card>
 </ion-content>
+
