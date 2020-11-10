@@ -18,6 +18,6 @@ export class MenuPage {
 
     selectGameMode(gameMode: GameMode): void {
         console.log('CHECK');
-        this.gameFacade.navigateToGameSelect(gameMode.id);
+        this.gameFacade.navigateToDifficultySelect(gameMode.id);
     }
 }

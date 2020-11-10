@@ -15,15 +15,15 @@ export class GameFacade {
     constructor(public store: Store, public http: HttpClient) {
     }
 
-    navigateToMenu() {
+    public navigateToMenu() {
         this.store.dispatch(new Navigate(['menu']));
     }
 
-    navigateToGame(id: string) {
+    public navigateToGame(id: string) {
         this.store.dispatch(new Navigate(['game', id]));
     }
 
-    navigateToGameSelect(id: string) {
+    public navigateToDifficultySelect(id: string) {
         this.store.dispatch(new Navigate(['menu', id]));
     }
 
