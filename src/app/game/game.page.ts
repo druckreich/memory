@@ -33,17 +33,16 @@ export class GamePage {
     timerStatus: GAME_TIMER_STATUS = GAME_TIMER_STATUS.STOP;
     milliseconds: number;
 
-    private gameStats: GameStats;
+    public gameStats: GameStats;
 
     constructor(public activatedRoute: ActivatedRoute,
                 public store: Store,
                 public firebaseService: FirebaseService,
-                public gameService: GameFacade,
-                public modalController: ModalController,
-                public gameFacade: GameFacade) {
+                public gameFacade: GameFacade,
+                public modalController: ModalController) {
 
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
-        this.game = this.gameService.getGameById(gameModeId);
+        this.game = this.gameFacade.getGameById(gameModeId);
     }
 
     ionViewWillEnter() {
@@ -51,21 +50,21 @@ export class GamePage {
     }
 
     loadGameStats(): void {
-        const subscription: Subscription = this.firebaseService.getUserStats(this.game.id)
+        const subscription: Subscription = this.firebaseService.getUserStats(this.game)
             .subscribe((gs: GameStats) => {
                 if (gs) {
                     this.gameStats = gs;
                     this.onPageStartUp();
                     subscription.unsubscribe();
                 } else {
-                    this.firebaseService.setUserStats(this.game.id, {completed: 0, started: 0, moves: 0});
+                    this.firebaseService.setUserStats(this.game, {completed: 0, started: 0, moves: 0});
                 }
             });
     }
 
     onPageStartUp() {
         const props: HighscoreModalProps = {
-            game: this.game,
+            game: this.game.gameMode,
             showedAfterGame: false,
             highscore$: this.getHighscore(),
             localHighscore$: null
@@ -92,7 +91,7 @@ export class GamePage {
 
     private prepareGame(): void {
         this.timerStatus = GAME_TIMER_STATUS.RESET;
-        this.gameService.createStones(this.game).subscribe((stones: Stone[]) => {
+        this.gameFacade.createStones(this.game).subscribe((stones: Stone[]) => {
             this.stones = produce([], draft => draft = stones);
             this.startGame();
         });
@@ -115,14 +114,14 @@ export class GamePage {
         this.updateGameStats(this.gameStats);
 
         this.showHighscoreModal({
-            game: this.game,
+            game: this.game.gameMode,
             showedAfterGame: true,
             highscore$: this.getHighscore(),
             localHighscore$: this.updateHighscore(this.milliseconds)
         });
     }
 
-    onTick(ms: number) {
+    private onTick(ms: number) {
         this.milliseconds = ms;
     }
 
@@ -221,14 +220,14 @@ export class GamePage {
     }
 
     getHighscore(): Observable<Highscore[]> {
-        return this.firebaseService.getHighscore(this.game.id, true, 10);
+        return this.firebaseService.getHighscore(this.game, true, 10);
     }
 
     updateHighscore(milliseconds: number): Promise<Highscore> {
-        return this.firebaseService.setHighscore(this.game.id, milliseconds);
+        return this.firebaseService.setHighscore(this.game, milliseconds);
     }
 
     updateGameStats(stats: GameStats): Observable<GameStats> {
-        return this.firebaseService.updateGameStats(this.game.id, stats);
+        return this.firebaseService.updateGameStats(this.game, stats);
     }
 }

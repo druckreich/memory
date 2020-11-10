@@ -1,10 +1,11 @@
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Injectable} from '@angular/core';
-import {GameStats, Highscore, User} from '@state/main.models';
+import {Game, GameMode, GameStats, Highscore, User} from '@state/main.models';
 import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {Store} from '@ngxs/store';
 import {MainState} from '@state/main.state';
+import {GameFacade} from '@state/game.facade';
 
 
 @Injectable({
@@ -14,7 +15,9 @@ export class FirebaseService {
 
     private readonly user: User = this.store.selectSnapshot(MainState.user);
 
-    constructor(public store: Store, private firestore: AngularFirestore) {
+    constructor(public store: Store,
+                public gameFacade: GameFacade,
+                public firestore: AngularFirestore) {
     }
 
     public userExists(username: string): Observable<User> {
@@ -37,13 +40,11 @@ export class FirebaseService {
         return this.firestore.collection('user').doc(user.username).set(user);
     }
 
-    public getHighscore(gameMode: string, sorted: boolean = false, limit: number = null) {
-        let highscores: Observable<Highscore[]> = this.firestore.doc<Highscore>('game/' + gameMode).collection('highscore').get().pipe(
-            map(d => d.docs.map((r) => {
-                return {
-                    id: r.id, ...r.data() as Highscore
-                };
-            }))
+    public getHighscore(game: Game, sorted: boolean = false, limit: number = null) {
+        let highscores: Observable<Highscore[]> = this.firestore.doc<Highscore>('game/' + this.gameFacade.gameToId(game)).collection('highscore').get()
+            .pipe(
+                map(d => d.docs.map((r) => ({id: r.id, ...r.data() as Highscore}))
+            )
         );
 
         if (sorted) {
@@ -61,27 +62,27 @@ export class FirebaseService {
         return highscores;
     }
 
-    public setHighscore(gameMode: string, milliseconds: number): Promise<Highscore> {
+    public setHighscore(game: Game, milliseconds: number): Promise<Highscore> {
         const highscore: Highscore = {username: this.user.username, score: milliseconds};
-        return this.firestore.doc<Highscore>('game/' + gameMode).collection('highscore').add(highscore)
+        return this.firestore.doc<Highscore>('game/' + `${game.gameMode.id}_${game.id}`).collection('highscore').add(highscore)
             .then((data => {
                     return {...highscore, id: data.id};
                 })
             );
     }
 
-    public getUserStats(gameId: string): Observable<GameStats> {
+    public getUserStats(game: Game): Observable<GameStats> {
         if (!this.user) {
             return null;
         }
-        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(gameId).valueChanges();
+        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(this.gameFacade.gameToId(game)).valueChanges();
     }
 
-    public setUserStats(gameId: string, stats: GameStats): any {
-        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(gameId).set(stats);
+    public setUserStats(game: Game, stats: GameStats): any {
+        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(this.gameFacade.gameToId(game)).set(stats);
     }
 
-    public updateGameStats(gameId: string, stats: GameStats): any {
-        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(gameId).update(stats);
+    public updateGameStats(game: Game, stats: GameStats): any {
+        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(this.gameFacade.gameToId(game)).update(stats);
     }
 }

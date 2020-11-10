@@ -12,12 +12,9 @@ export class MenuPage {
 
     public readonly gameModes: GameMode[] = this.gameFacade.getGameModes();
 
-    constructor(public gameFacade: GameFacade) {
-
-    }
+    constructor(public gameFacade: GameFacade) {}
 
     selectGameMode(gameMode: GameMode): void {
-        console.log('CHECK');
         this.gameFacade.navigateToDifficultySelect(gameMode.id);
     }
 }

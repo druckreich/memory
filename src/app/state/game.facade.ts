@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Game, GameMode, Stone, StoneState} from './main.models';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {GAME_MODES, GAMES} from '@state/game.model';
+import {GAME_MODE_IDS, GAME_MODES, GAMES} from '@state/game.model';
 import {Store} from '@ngxs/store';
 import {Navigate} from '@ngxs/router-plugin';
 
@@ -12,7 +12,8 @@ import {Navigate} from '@ngxs/router-plugin';
 })
 export class GameFacade {
 
-    constructor(public store: Store, public http: HttpClient) {
+    constructor(public store: Store,
+                public http: HttpClient) {
     }
 
     public navigateToMenu() {
@@ -23,36 +24,75 @@ export class GameFacade {
         this.store.dispatch(new Navigate(['game', id]));
     }
 
-    public navigateToDifficultySelect(id: string) {
-        this.store.dispatch(new Navigate(['menu', id]));
+    public navigateToDifficultySelect(gameModeId: string) {
+        this.store.dispatch(new Navigate(['menu', gameModeId]));
+    }
+
+    public gameToId(game: Game): string {
+        return `${game.gameMode.id}_${game.id}`;
     }
 
     public getGameModes(): GameMode[] {
         return GAME_MODES;
     }
 
-    public getGameModeId(gameModeId: string): GameMode {
+    public getGameModeById(gameModeId: string): GameMode {
         return GAME_MODES.find((gm: GameMode) => gm.id === gameModeId);
     }
 
-    public getGamesByGameModeId(gameModeId: string): Game[] {
-        return GAMES.filter((game: Game) => game.gameMode.id === gameModeId);
+    public getGamesByGameMode(gameMode: GameMode): Game[] {
+        return GAMES.filter((game: Game) => game.gameMode.id === gameMode.id);
     }
 
     public getGameById(gameId: string) {
-        return GAMES.find((game: Game) => game.id === gameId);
+        const split: string[] = gameId.split('_');
+        const games: Game[] = this.getGamesByGameMode(this.getGameModeById(split[0]));
+        return games.find((game: Game) => game.id === split[1]);
     }
 
     public createStones(game: Game): Observable<Stone[]> {
-        return this.http.get('assets/icons.json').pipe(
-            map((icons: string[]) => {
-                let stones: Stone[] = [];
-                const uniqueSets: string[] = this.getRandomElementsFromArray(icons, game.setNumber);
-                for (let i = 0; i < uniqueSets.length; i++) {
-                    stones = stones.concat(this.createSet(game.setSize, uniqueSets[i]));
-                }
-                return this.shuffleArray(stones);
-            }));
+        switch (game.gameMode.id) {
+            case GAME_MODE_IDS.images:
+                return this.createStonesForImages(game);
+            case GAME_MODE_IDS.number:
+                return this.createStonesForNumbers(game);
+        }
+    }
+
+    private createStonesForNumbers(game: Game): Observable<Stone[]> {
+        // check for number range e.g. [1-9]
+        // create a random calculation for a random number
+        // create 2 stones calculation <-> result
+        return of([]);
+    }
+
+    private createStonesForImages(game: Game): Observable<Stone[]> {
+        return this.http.get('assets/icons.json')
+            .pipe(
+                map((icons: string[]) => {
+                    let stones: Stone[] = [];
+                    const uniqueSets: string[] = this.getRandomElementsFromArray(icons, game.setNumber);
+                    for (let i = 0; i < uniqueSets.length; i++) {
+                        stones = stones.concat(this.createSet(game.setSize, uniqueSets[i]));
+                    }
+                    return this.shuffleArray(stones);
+                })
+            );
+    }
+
+    private getRandomElementsFromArray(arr, n) {
+        const result = new Array(n);
+        let len = arr.length;
+        const taken = new Array(len);
+        if (n > len) {
+            throw new RangeError('getRandom: more elements taken than available');
+        }
+        while (n--) {
+            const x = Math.floor(Math.random() * len);
+            result[n] = arr[x in taken ? taken[x] : x];
+            taken[x] = --len in taken ? taken[len] : len;
+        }
+        return result;
     }
 
     private createSet(setSize: number, icon: string): Stone[] {
@@ -86,21 +126,4 @@ export class GameFacade {
         }
         return a;
     }
-
-    private getRandomElementsFromArray(arr, n) {
-        const result = new Array(n);
-        let len = arr.length;
-        const taken = new Array(len);
-        if (n > len) {
-            throw new RangeError('getRandom: more elements taken than available');
-        }
-        while (n--) {
-            const x = Math.floor(Math.random() * len);
-            result[n] = arr[x in taken ? taken[x] : x];
-            taken[x] = --len in taken ? taken[len] : len;
-        }
-        return result;
-    }
-
-
 }
