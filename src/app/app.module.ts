@@ -23,6 +23,8 @@ import {LogInModalComponent} from '@app/shared/log-in-modal/log-in-modal.compone
 import {APP_ROUTES} from '@app/app.routes';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {NgxsSelectSnapshotModule} from '@ngxs-labs/select-snapshot';
+import {CommonModule} from '@angular/common';
+import {SharedModule} from '@app/shared.module';
 
 
 @NgModule({
@@ -34,8 +36,8 @@ import {NgxsSelectSnapshotModule} from '@ngxs-labs/select-snapshot';
         LogInModalComponent
     ],
     imports: [
-        BrowserAnimationsModule,
         BrowserModule,
+        BrowserAnimationsModule,
         HttpClientModule,
         IonicModule.forRoot(),
 

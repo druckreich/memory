@@ -9,6 +9,8 @@ import {GameHighscoreModalComponent} from '@app/game/game-highscore-modal/game-h
 import {FirebaseService} from '@state/firebase.service';
 import {produce} from 'immer';
 import {Observable, Subscription} from 'rxjs';
+import {DestroyableComponent} from '@app/shared/destroyable/destroyable.component';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'memo-game',
@@ -16,9 +18,9 @@ import {Observable, Subscription} from 'rxjs';
     styleUrls: ['./game.page.scss'],
     changeDetection: ChangeDetectionStrategy.Default
 })
-export class GamePage {
+export class GamePage extends DestroyableComponent {
 
-    public readonly game: Game;
+    public game: Game;
 
     stones: Stone[] = produce([], draft => {
     });
@@ -40,7 +42,7 @@ export class GamePage {
                 public firebaseService: FirebaseService,
                 public gameFacade: GameFacade,
                 public modalController: ModalController) {
-
+        super();
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
         this.game = this.gameFacade.getGameById(gameModeId);
     }
@@ -50,12 +52,12 @@ export class GamePage {
     }
 
     loadGameStats(): void {
-        const subscription: Subscription = this.firebaseService.getUserStats(this.game)
+        this.firebaseService.getUserStats(this.game)
+            .pipe(takeUntil(this.destroy$))
             .subscribe((gs: GameStats) => {
                 if (gs) {
                     this.gameStats = gs;
                     this.onPageStartUp();
-                    subscription.unsubscribe();
                 } else {
                     this.firebaseService.setUserStats(this.game, {completed: 0, started: 0, moves: 0});
                 }
@@ -91,13 +93,15 @@ export class GamePage {
 
     private prepareGame(): void {
         this.timerStatus = GAME_TIMER_STATUS.RESET;
-        this.gameFacade.createStones(this.game).subscribe((stones: Stone[]) => {
-            this.stones = produce([], draft => draft = stones);
-            this.startGame();
-        });
+        this.gameFacade.createStones(this.game)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((stones: Stone[]) => {
+                this.stones = produce([], draft => draft = stones);
+                this.startGame();
+            });
     }
 
-    private startGame(): void {
+    public startGame(): void {
         this.showStones = true;
         this.showBackdrop = false;
         this.disableStones = false;

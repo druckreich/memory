@@ -16,6 +16,8 @@ export class MenuPage {
 
     public gameModes: GameMode[] = this.gameFacade.gameModes;
 
+    rows: number[] = [1, 2, 3, 4];
+
     constructor(public gameFacade: GameFacade) {
     }
 

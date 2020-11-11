@@ -13,9 +13,7 @@ import {TabDirective} from '@app/tab.directive';
         TimerPipe,
         TabDirective
     ],
-    imports: [
-        CommonModule
-    ]
+    imports: []
 })
 export class SharedModule {
 }

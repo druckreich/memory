@@ -36,27 +36,8 @@ export class GameState {
     }
 
     @Selector([GAME_STATE_TOKEN])
-    public static games(state: GameStateModel): GameMode[] {
+    public static games(state: GameStateModel): Game[] {
         return state.games;
-    }
-
-    @Selector([GAME_STATE_TOKEN])
-    public static gameModeById(state: GameStateModel) {
-        return (gameModeId: string): GameMode => state.gameModes.find((gm: GameMode) => gm.id === gameModeId);
-    }
-
-    @Selector([GAME_STATE_TOKEN])
-    public static gamesByGameModeId(state: GameStateModel) {
-        return (gameModeId: string): Game[] => state.games.filter((gm: Game) => gm.gameMode.id === gameModeId);
-    }
-
-    @Selector([GAME_STATE_TOKEN])
-    public static gameById(state: GameStateModel) {
-        return (gameId: string): Game => {
-            const split: string[] = gameId.split('_');
-            const games: Game[] = state.games.filter((gm: Game) => gm.gameMode.id === split[0]);
-            return games.find((game: Game) => game.id === split[1]);
-        };
     }
 
     constructor() {

@@ -76,7 +76,7 @@ export class GameFacade {
     }
 
     private createStonesForImages(game: Game): Observable<Stone[]> {
-        return this.http.get('assets/icons.json')
+        return this.http.get(game.source.images)
             .pipe(
                 map((icons: string[]) => {
                     let stones: Stone[] = [];

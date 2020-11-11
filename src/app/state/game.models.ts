@@ -37,12 +37,20 @@ export interface Game {
     id: string;
     label: string;
     gameMode: GameMode;
-    description: string;
+
+    /**
+     * Defines the source of the memory image
+     */
+    source: DataSource;
     setNumber: number;
     setSize: number;
     rows?: number[];
 }
 
+export interface DataSource {
+    images?: string;
+    numbers?: any;
+}
 
 export interface Highscore {
     id?: string;
