@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Game, GameStats, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/main.models';
+import {Game, GameStats, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/game.models';
 import {GameFacade} from '@state/game.facade';
 import {GAME_TIMER_STATUS} from './game-timer/game-timer.component';
 import {Store} from '@ngxs/store';

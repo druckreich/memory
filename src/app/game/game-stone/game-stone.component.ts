@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Stone, StoneDimension, StoneState} from '@state/main.models';
+import {Stone, StoneDimension, StoneState} from '@state/game.models';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {produce} from 'immer';
 

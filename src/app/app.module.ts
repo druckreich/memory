@@ -8,7 +8,7 @@ import {StatusBar} from '@ionic-native/status-bar/ngx';
 
 import {AppComponent} from './app.component';
 import {NgxsModule} from '@ngxs/store';
-import {MainState} from '@state/main.state';
+import {GAME_STATE_TOKEN, GameState, GameStateModel} from '@state/game.state';
 import {environment} from '@environment/environment';
 import {NgxsRouterPluginModule} from '@ngxs/router-plugin';
 import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
@@ -21,6 +21,8 @@ import {AngularFireDatabaseModule} from '@angular/fire/database';
 import {NgxsDispatchPluginModule} from '@ngxs-labs/dispatch-decorator';
 import {LogInModalComponent} from '@app/shared/log-in-modal/log-in-modal.component';
 import {APP_ROUTES} from '@app/app.routes';
+import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
+import {NgxsSelectSnapshotModule} from '@ngxs-labs/select-snapshot';
 
 
 @NgModule({
@@ -42,14 +44,14 @@ import {APP_ROUTES} from '@app/app.routes';
         AngularFireDatabaseModule,
 
         // ngxs integration
-        NgxsModule.forRoot([MainState], {
-            developmentMode: !environment.production
-        }),
+        NgxsModule.forRoot([GameState], {developmentMode: true}),
         NgxsStoragePluginModule.forRoot({
-            key: [MainState]
+            key: GAME_STATE_TOKEN
         }),
         NgxsRouterPluginModule.forRoot(),
         NgxsDispatchPluginModule.forRoot(),
+        NgxsReduxDevtoolsPluginModule.forRoot(),
+        NgxsSelectSnapshotModule.forRoot(),
 
         RouterModule.forRoot(APP_ROUTES, {preloadingStrategy: PreloadAllModules})
     ],

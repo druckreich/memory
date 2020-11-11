@@ -2,8 +2,9 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Store} from '@ngxs/store';
 import {ModalController} from '@ionic/angular';
 import {FirebaseService} from '@state/firebase.service';
-import {User} from '@state/main.models';
-import {SetUser} from '@state/main.actions';
+import {User} from '@state/game.models';
+import {SetUser} from '@state/game.actions';
+import {GameFacade} from '@state/game.facade';
 
 @Component({
     selector: 'log-in-modal',

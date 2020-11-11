@@ -1,6 +1,9 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {GameMode} from '@state/main.models';
+import {GameMode} from '@state/game.models';
 import {GameFacade} from '@state/game.facade';
+import {Select} from '@ngxs/store';
+import {GameState} from '@state/game.state';
+import {Observable} from 'rxjs';
 
 @Component({
     selector: 'app-menu',
@@ -10,9 +13,11 @@ import {GameFacade} from '@state/game.facade';
 })
 export class MenuPage {
 
-    public readonly gameModes: GameMode[] = this.gameFacade.getGameModes();
 
-    constructor(public gameFacade: GameFacade) {}
+    public gameModes: GameMode[] = this.gameFacade.gameModes;
+
+    constructor(public gameFacade: GameFacade) {
+    }
 
     selectGameMode(gameMode: GameMode): void {
         this.gameFacade.navigateToDifficultySelect(gameMode.id);

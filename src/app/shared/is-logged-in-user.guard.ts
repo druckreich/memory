@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
 import {Observable, of} from 'rxjs';
 import {Select} from '@ngxs/store';
-import {MainState} from '@state/main.state';
-import {User} from '@state/main.models';
+import {GameState} from '@state/game.state';
+import {User} from '@state/game.models';
 import {ModalController} from '@ionic/angular';
 import {LogInModalComponent} from '@app/shared/log-in-modal/log-in-modal.component';
 import {flatMap} from 'rxjs/operators';
@@ -13,7 +13,7 @@ import {flatMap} from 'rxjs/operators';
 })
 export class IsLoggedInUserGuard implements CanActivate {
 
-    @Select(MainState.user)
+    @Select(GameState.user)
     public readonly user$: Observable<User>;
 
     constructor(public modalController: ModalController) {

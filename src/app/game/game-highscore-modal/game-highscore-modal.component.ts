@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {GameMode, Highscore} from '@state/main.models';
+import {GameMode, Highscore} from '@state/game.models';
 import {Observable} from 'rxjs';
 import {ModalController} from '@ionic/angular';
 

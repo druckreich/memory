@@ -1,4 +1,4 @@
-import {Game, GameMode} from '@state/main.models';
+import {Game, GameMode} from './game.models';
 
 export enum GAME_MODE_IDS {
     images= 'image',

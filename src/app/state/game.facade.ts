@@ -1,16 +1,24 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Game, GameMode, Stone, StoneState} from './main.models';
+import {Game, GameMode, Stone, StoneState} from './game.models';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {GAME_MODE_IDS, GAME_MODES, GAMES} from '@state/game.model';
+import {GAME_MODE_IDS} from '@state/game.data';
 import {Store} from '@ngxs/store';
 import {Navigate} from '@ngxs/router-plugin';
+import {SelectSnapshot} from '@ngxs-labs/select-snapshot';
+import {GameState} from '@state/game.state';
 
 @Injectable({
     providedIn: 'root'
 })
 export class GameFacade {
+
+    @SelectSnapshot(GameState.gameModes)
+    public gameModes: GameMode[];
+
+    @SelectSnapshot(GameState.games)
+    public games: Game[];
 
     constructor(public store: Store,
                 public http: HttpClient) {
@@ -32,16 +40,17 @@ export class GameFacade {
         return `${game.gameMode.id}_${game.id}`;
     }
 
-    public getGameModes(): GameMode[] {
-        return GAME_MODES;
-    }
-
     public getGameModeById(gameModeId: string): GameMode {
-        return GAME_MODES.find((gm: GameMode) => gm.id === gameModeId);
+        return this.gameModes.find((gm: GameMode) => gm.id === gameModeId);
     }
 
     public getGamesByGameMode(gameMode: GameMode): Game[] {
-        return GAMES.filter((game: Game) => game.gameMode.id === gameMode.id);
+        return this.games.filter((game: Game) => game.gameMode.id === gameMode.id);
+    }
+
+    public getGamesByGameModeId(gameModeId: string): Game[] {
+        const gameMode: GameMode = this.getGameModeById(gameModeId);
+        return this.getGamesByGameMode(gameMode);
     }
 
     public getGameById(gameId: string) {

@@ -1,19 +1,18 @@
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Injectable} from '@angular/core';
-import {Game, GameMode, GameStats, Highscore, User} from '@state/main.models';
+import {Game, GameStats, Highscore, User} from '@state/game.models';
 import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {Store} from '@ngxs/store';
-import {MainState} from '@state/main.state';
+import {GameState} from '@state/game.state';
 import {GameFacade} from '@state/game.facade';
-
 
 @Injectable({
     providedIn: 'root',
 })
 export class FirebaseService {
 
-    private readonly user: User = this.store.selectSnapshot(MainState.user);
+    private readonly user: User = this.store.selectSnapshot(GameState.user);
 
     constructor(public store: Store,
                 public gameFacade: GameFacade,
@@ -44,8 +43,8 @@ export class FirebaseService {
         let highscores: Observable<Highscore[]> = this.firestore.doc<Highscore>('game/' + this.gameFacade.gameToId(game)).collection('highscore').get()
             .pipe(
                 map(d => d.docs.map((r) => ({id: r.id, ...r.data() as Highscore}))
-            )
-        );
+                )
+            );
 
         if (sorted) {
             highscores = highscores.pipe(

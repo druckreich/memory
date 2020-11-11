@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Game, GameMode} from '@state/main.models';
+import {Game, GameMode} from '@state/game.models';
 import {GameFacade} from '@state/game.facade';
-import {Store} from '@ngxs/store';
-import {Navigate} from '@ngxs/router-plugin';
-import {toNumbers} from '@angular/compiler-cli/src/diagnostics/typescript_version';
+import {Select, Selector, Store} from '@ngxs/store';
+import {GameState, GameStateModel} from '@state/game.state';
+import {Observable} from 'rxjs';
 
 @Component({
     selector: 'memo-mode',
@@ -13,13 +13,14 @@ import {toNumbers} from '@angular/compiler-cli/src/diagnostics/typescript_versio
 })
 export class ModeComponent implements OnInit {
 
-    public readonly gameMode: GameMode;
     public readonly games: Game[];
+    public readonly gameMode: GameMode;
 
-    constructor(public store: Store, public activatedRoute: ActivatedRoute, public gameFacade: GameFacade) {
+    constructor(public activatedRoute: ActivatedRoute,
+                public gameFacade: GameFacade) {
         const gameModeId: string = this.activatedRoute.snapshot.params.modeId;
         this.gameMode = this.gameFacade.getGameModeById(gameModeId);
-        this.games = this.gameFacade.getGamesByGameMode(this.gameMode);
+        this.games = this.gameFacade.getGamesByGameModeId(gameModeId);
     }
 
     ngOnInit() {
