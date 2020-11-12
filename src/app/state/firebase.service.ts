@@ -1,7 +1,7 @@
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Injectable} from '@angular/core';
 import {Game, GameStats, Highscore, User} from '@state/game.models';
-import {map} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {Store} from '@ngxs/store';
 import {GameState} from '@state/game.state';
@@ -21,18 +21,21 @@ export class FirebaseService {
 
     public userExists(username: string): Observable<User> {
         return this.firestore.collection('user').doc(username).get().pipe(
+            take(1),
             map(d => d.data() as User)
         );
     }
 
     public getUser(user: User) {
-        return this.firestore.doc('user/' + user.username).get().pipe(
-            map(action => {
-                const data = action.data() as User;
-                const id = action.id;
-                return {id, ...data} as User;
-            })
-        );
+        return this.firestore.doc('user/' + user.username).get()
+            .pipe(
+                take(1),
+                map(action => {
+                    const data = action.data() as User;
+                    const id = action.id;
+                    return {id, ...data} as User;
+                })
+            );
     }
 
     public setUser(user: User) {
@@ -42,6 +45,7 @@ export class FirebaseService {
     public getHighscore(game: Game, sorted: boolean = false, limit: number = null) {
         let highscores: Observable<Highscore[]> = this.firestore.doc<Highscore>('game/' + this.gameFacade.gameToId(game)).collection('highscore').get()
             .pipe(
+                take(1),
                 map(d => d.docs.map((r) => ({id: r.id, ...r.data() as Highscore}))
                 )
             );
@@ -57,7 +61,6 @@ export class FirebaseService {
                 map((h: Highscore[]) => h.slice(0, limit))
             );
         }
-
         return highscores;
     }
 
@@ -74,14 +77,24 @@ export class FirebaseService {
         if (!this.user) {
             return null;
         }
-        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(this.gameFacade.gameToId(game)).valueChanges();
+        return this.firestore.doc<GameStats>('user/' + this.user.username)
+            .collection('stats')
+            .doc(this.gameFacade.gameToId(game))
+            .valueChanges()
+            .pipe(take(1));
     }
 
     public setUserStats(game: Game, stats: GameStats): any {
-        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(this.gameFacade.gameToId(game)).set(stats);
+        return this.firestore.doc<GameStats>('user/' + this.user.username)
+            .collection('stats')
+            .doc(this.gameFacade.gameToId(game))
+            .set(stats);
     }
 
     public updateGameStats(game: Game, stats: GameStats): any {
-        return this.firestore.doc<GameStats>('user/' + this.user.username).collection('stats').doc(this.gameFacade.gameToId(game)).update(stats);
+        return this.firestore.doc<GameStats>('user/' + this.user.username)
+            .collection('stats')
+            .doc(this.gameFacade.gameToId(game))
+            .update(stats);
     }
 }

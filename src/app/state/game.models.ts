@@ -34,22 +34,41 @@ export interface GameMode {
 }
 
 export interface Game {
+
+    /**
+     * Id
+     */
     id: string;
+
+    /**
+     * A name or label for the game
+     */
     label: string;
+
+    /**
+     * Which game mode is used
+     */
     gameMode: GameMode;
 
     /**
      * Defines the source of the memory image
      */
     source: DataSource;
-    setNumber: number;
-    setSize: number;
+
+    /**
+     * Defines the matrix for the memory game
+     */
     rows?: number[];
 }
 
 export interface DataSource {
-    images?: string;
-    numbers?: any;
+    images?: DataSourceComposition;
+    numbers?: DataSourceComposition;
+}
+
+export interface DataSourceComposition {
+    source: any;
+    composition: number[];
 }
 
 export interface Highscore {

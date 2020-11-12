@@ -24,21 +24,23 @@ export const GAMES: Game[] = [
         label: 'Too easy ...',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
         source: {
-            images: 'assets/icons.json'
+            images: {
+                source: 'assets/icons.json',
+                composition: [2, 2],
+            }
         },
-        setNumber: 6,
-        setSize: 2,
-        rows: [3, 3, 3, 3]
+        rows: [2, 2]
     },
     {
         id: 'normal',
         label: 'normal',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
         source: {
-            images: 'assets/icons.json'
+            images: {
+                source: 'assets/icons.json',
+                composition: [2, 2, 2, 2, 2, 2, 2, 2]
+            }
         },
-        setNumber: 8,
-        setSize: 2,
         rows: [4, 4, 4, 4]
     },
     {
@@ -46,10 +48,11 @@ export const GAMES: Game[] = [
         label: 'hard',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
         source: {
-            images: 'assets/icons.json'
+            images: {
+                source: 'assets/icons.json',
+                composition: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+            }
         },
-        setNumber: 10,
-        setSize: 2,
         rows: [4, 4, 4, 4, 4]
     },
     {
@@ -57,10 +60,11 @@ export const GAMES: Game[] = [
         label: 'insanse',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
         source: {
-            images: 'assets/icons.json'
+            images: {
+                source: 'assets/icons.json',
+                composition: [3, 3, 3, 3, 3]
+            }
         },
-        setNumber: 5,
-        setSize: 3,
         rows: [3, 3, 3, 3, 3]
     },
     {
@@ -68,10 +72,11 @@ export const GAMES: Game[] = [
         label: 'wtf',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
         source: {
-            images: 'assets/icons.json'
+            images: {
+                source: 'assets/icons.json',
+                composition: [3, 3, 3, 3, 3, 3]
+            }
         },
-        setNumber: 6,
-        setSize: 3,
         rows: [3, 4, 4, 4, 3]
     },
     {
@@ -79,24 +84,25 @@ export const GAMES: Game[] = [
         label: 'god',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
         source: {
-            images: 'assets/icons.json'
+            images: {
+                source: 'assets/icons.json',
+                composition: [4, 4, 4, 4, 4]
+            }
         },
-        setNumber: 5,
-        setSize: 4,
         rows: [4, 4, 4, 4, 4]
     },
-    // numbers
     {
         id: 'easy',
         label: 'number Too easy ...',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.number),
         source: {
-            numbers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            numbers: {
+                source: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                composition: [2, 2, 2, 2, 2, 2]
+            }
         },
-        setNumber: 6,
-        setSize: 2,
         rows: [3, 3, 3, 3]
-    },
+    }
 ];
 
 

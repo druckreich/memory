@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Game, GameMode, Stone, StoneState} from './game.models';
+import {DataSourceComposition, Game, GameMode, Stone, StoneState} from './game.models';
 import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {GAME_MODE_IDS} from '@state/game.data';
@@ -76,17 +76,21 @@ export class GameFacade {
     }
 
     private createStonesForImages(game: Game): Observable<Stone[]> {
-        return this.http.get(game.source.images)
+        const composition: DataSourceComposition = game.source.images;
+        const stones: Observable<Stone[]> = this.http.get(composition.source)
             .pipe(
                 map((icons: string[]) => {
-                    let stones: Stone[] = [];
-                    const uniqueSets: string[] = this.getRandomElementsFromArray(icons, game.setNumber);
+                    let s: Stone[] = [];
+                    const uniqueSets: string[] = this.getRandomElementsFromArray(icons, composition.composition.length);
                     for (let i = 0; i < uniqueSets.length; i++) {
-                        stones = stones.concat(this.createSet(game.setSize, uniqueSets[i]));
+                        s = s.concat(this.createSet(composition.composition[i], uniqueSets[i]));
                     }
-                    return this.shuffleArray(stones);
+                    console.log(s);
+                    return this.shuffleArray(s);
                 })
             );
+        console.log(stones);
+        return stones;
     }
 
     private getRandomElementsFromArray(arr, n) {

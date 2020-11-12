@@ -10,7 +10,7 @@ import {FirebaseService} from '@state/firebase.service';
 import {produce} from 'immer';
 import {Observable, Subscription} from 'rxjs';
 import {DestroyableComponent} from '@app/shared/destroyable/destroyable.component';
-import {takeUntil} from 'rxjs/operators';
+import {take, takeUntil} from 'rxjs/operators';
 
 @Component({
     selector: 'memo-game',
@@ -53,7 +53,7 @@ export class GamePage extends DestroyableComponent {
 
     loadGameStats(): void {
         this.firebaseService.getUserStats(this.game)
-            .pipe(takeUntil(this.destroy$))
+
             .subscribe((gs: GameStats) => {
                 if (gs) {
                     this.gameStats = gs;
@@ -61,6 +61,7 @@ export class GamePage extends DestroyableComponent {
                 } else {
                     this.firebaseService.setUserStats(this.game, {completed: 0, started: 0, moves: 0});
                 }
+
             });
     }
 
@@ -109,6 +110,7 @@ export class GamePage extends DestroyableComponent {
     }
 
     private stopGame(): void {
+        console.log('STOP_GAME');
         this.showBackdrop = true;
         this.disableStones = true;
         this.showCountdown = false;
@@ -137,7 +139,7 @@ export class GamePage extends DestroyableComponent {
         this.unflippedStones = produce(this.unflippedStones, draft => {
             draft.push(stone);
         });
-        if (this.unflippedStones.length === this.game.setSize) {
+        if (this.unflippedStones.length === this.unflippedStones[0].setSize) {
             this.gameStats.moves++;
             this.disableStones = true;
         }
@@ -149,9 +151,13 @@ export class GamePage extends DestroyableComponent {
     onStoneFlipped(stone: Stone): void {
     }
 
-    // flip animation ends
+    /**
+     * Trigged by the template when the stone unflip animation has finished
+     * @param stone
+     */
     onStoneUnflipped(stone: Stone): void {
-        if (this.unflippedStones.length < this.game.setSize) {
+        if (this.unflippedStones.length === 0 ||
+            this.unflippedStones.length < this.unflippedStones[0].setSize) {
             return;
         }
 
@@ -224,7 +230,7 @@ export class GamePage extends DestroyableComponent {
     }
 
     getHighscore(): Observable<Highscore[]> {
-        return this.firebaseService.getHighscore(this.game, true, 10);
+        return this.firebaseService.getHighscore(this.game, true, 10).pipe(take(1));
     }
 
     updateHighscore(milliseconds: number): Promise<Highscore> {
