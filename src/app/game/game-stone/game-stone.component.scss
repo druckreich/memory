@@ -19,7 +19,6 @@
   backface-visibility: hidden;
   color: #fff;
   text-align: center;
-  line-height: 100px;
   cursor: pointer;
   user-select: none;
 }
@@ -43,4 +42,13 @@
   height: 100%;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.number {
+  position: absolute;
+  color: #1e2023;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }

@@ -40,6 +40,7 @@
     "immer": "^6.0.9",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
+    "uuid": "^8.3.1",
     "zone.js": "~0.10.3"
   },
   "devDependencies": {

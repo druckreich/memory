@@ -1,18 +1,17 @@
-import {Game, GameMode} from './game.models';
+import {Game, GameMode, GameType} from './game.models';
 
-export enum GAME_MODE_IDS {
-    images= 'image',
-    number= 'number'
-}
+const ZERLEGUNG_20 = [[0, 20], [1, 19], [2, 18], [3, 17], [4, 16], [5, 15], [6, 14], [7, 13], [8, 12], [9, 11], [10, 10]];
 
 export const GAME_MODES: GameMode[] = [
     {
-        id: GAME_MODE_IDS.images,
+        id: GameType.image,
+        type: GameType.image,
         label: 'Images',
         description: 'Versuche zusammengehörige Bilder zu finden'
     },
     {
-        id: GAME_MODE_IDS.number,
+        id: GameType.number,
+        type: GameType.number,
         label: 'Numbers',
         description: 'Versuche zusammengehörige Zahlen zu finden'
     }
@@ -22,7 +21,7 @@ export const GAMES: Game[] = [
     {
         id: 'easy',
         label: 'Too easy ...',
-        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
@@ -34,7 +33,7 @@ export const GAMES: Game[] = [
     {
         id: 'normal',
         label: 'normal',
-        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
@@ -46,7 +45,7 @@ export const GAMES: Game[] = [
     {
         id: 'hard',
         label: 'hard',
-        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
@@ -58,7 +57,7 @@ export const GAMES: Game[] = [
     {
         id: 'insanse',
         label: 'insanse',
-        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
@@ -70,7 +69,7 @@ export const GAMES: Game[] = [
     {
         id: 'wtf',
         label: 'wtf',
-        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
@@ -82,7 +81,7 @@ export const GAMES: Game[] = [
     {
         id: 'god',
         label: 'god',
-        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.images),
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
@@ -94,15 +93,29 @@ export const GAMES: Game[] = [
     {
         id: 'easy',
         label: 'number Too easy ...',
-        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GAME_MODE_IDS.number),
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.number),
         source: {
             numbers: {
-                source: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                source: ZERLEGUNG_20,
                 composition: [2, 2, 2, 2, 2, 2]
+            }
+        },
+        rows: [3, 3, 3, 3]
+    },
+    {
+        id: 'easy',
+        label: 'number Too easy ...',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.number),
+        source: {
+            numbers: {
+                source: ZERLEGUNG_20,
+                composition: [2, 2, 2, 2, 2, 2, 2, 2]
             }
         },
         rows: [3, 3, 3, 3]
     }
 ];
+
+
 
 

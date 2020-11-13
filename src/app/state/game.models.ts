@@ -1,16 +1,28 @@
 import {Observable} from 'rxjs';
 
+export enum GameType {
+    image = 'image',
+    number = 'number'
+}
+
 export enum StoneState {
     flipped = 'flipped',
     unflipped = 'unflipped',
     found = 'found'
 }
 
+export enum StoneType {
+    image,
+    number
+}
+
+
 export interface Stone {
-    id?: string;
-    setId?: string;
-    setSize?: number;
-    icon?: string;
+    id: string;
+    setId: string;
+    setSize: number;
+    setType: GameType;
+    source: string;
     state?: StoneState;
     disabled?: boolean;
     flipped?: boolean;
@@ -29,6 +41,7 @@ export interface GameModeWithHighscore extends GameMode {
 
 export interface GameMode {
     id: string;
+    type: GameType;
     label: string;
     description: string;
 }
