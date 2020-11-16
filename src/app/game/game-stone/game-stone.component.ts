@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Stone, StoneDimension, StoneState} from '@state/game.models';
+import {Stone, StoneDimension, StoneAnimationState} from '@state/game.models';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {produce} from 'immer';
 
@@ -66,7 +66,7 @@ export class GameStoneComponent implements OnInit {
             if (this.stone.flipped === true) {
                 this.stone = produce(this.stone, draft => {
                     draft.flipped = false;
-                    draft.state = StoneState.unflipped;
+                    draft.state = StoneAnimationState.unflipped;
                 });
                 this.tabbed.emit(this.stone);
                 this.cd.detectChanges();

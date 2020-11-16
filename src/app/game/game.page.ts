@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Game, GameStats, Highscore, HighscoreModalProps, Stone, StoneState} from '@state/game.models';
+import {Game, GameStats, GameType, Highscore, HighscoreModalProps, Stone, StoneAnimationState} from '@state/game.models';
 import {GameFacade} from '@state/game.facade';
 import {GAME_TIMER_STATUS} from './game-timer/game-timer.component';
 import {Store} from '@ngxs/store';
@@ -8,9 +8,11 @@ import {ModalController} from '@ionic/angular';
 import {GameHighscoreModalComponent} from '@app/game/game-highscore-modal/game-highscore-modal.component';
 import {FirebaseService} from '@state/firebase.service';
 import {produce} from 'immer';
-import {Observable, Subscription} from 'rxjs';
+import {Observable} from 'rxjs';
 import {DestroyableComponent} from '@app/shared/destroyable/destroyable.component';
 import {take, takeUntil} from 'rxjs/operators';
+import {ImageGame} from '@app/shared/util/image.game';
+import {NumberGame} from '@app/shared/util/number.game';
 
 @Component({
     selector: 'memo-game',
@@ -45,6 +47,8 @@ export class GamePage extends DestroyableComponent {
         super();
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
         this.game = this.gameFacade.getGameById(gameModeId);
+
+        this.gameStats = {completed: 0, started: 0, moves: 0};
     }
 
     ionViewWillEnter() {
@@ -53,15 +57,11 @@ export class GamePage extends DestroyableComponent {
 
     loadGameStats(): void {
         this.firebaseService.getUserStats(this.game)
-
             .subscribe((gs: GameStats) => {
                 if (gs) {
-                    this.gameStats = gs;
-                    this.onPageStartUp();
-                } else {
                     this.firebaseService.setUserStats(this.game, {completed: 0, started: 0, moves: 0});
                 }
-
+                this.onPageStartUp();
             });
     }
 
@@ -110,7 +110,6 @@ export class GamePage extends DestroyableComponent {
     }
 
     private stopGame(): void {
-        console.log('STOP_GAME');
         this.showBackdrop = true;
         this.disableStones = true;
         this.showCountdown = false;
@@ -132,6 +131,8 @@ export class GamePage extends DestroyableComponent {
     }
 
     private onStoneTabbed(stone: Stone): void {
+        // if the game was not started then the first stone was tabbed
+        // -> start the timer
         if (this.timerStatus !== GAME_TIMER_STATUS.START) {
             this.timerStatus = GAME_TIMER_STATUS.START;
             this.gameStats.started++;
@@ -156,49 +157,65 @@ export class GamePage extends DestroyableComponent {
      * @param stone
      */
     onStoneUnflipped(stone: Stone): void {
+
+        // not the correct set size
         if (this.unflippedStones.length === 0 ||
             this.unflippedStones.length < this.unflippedStones[0].setSize) {
             return;
         }
 
-        const setIds: string[] = this.unflippedStones
-            .map((s: Stone) => s.setId)
+        // check if stones from different same game types have been unflipped
+        const setTypes: string[] = this.unflippedStones
+            .map((s: Stone) => s.setType)
             .filter((value, index, self) => self.indexOf(value) === index);
 
-        // the stones are invalid - flip it back
-        if (setIds.length > 1) {
-            const stonesToUpdate: Stone[] = produce(this.unflippedStones, draft => {
-                draft.map((d) => {
-                    d.flipped = true;
-                    d.state = StoneState.flipped;
-                });
-            });
-            this.unflippedStones = [];
-            setTimeout(() => {
-                this.updateStones(stonesToUpdate);
-                this.disableStones = false;
-            }, 400);
+        // different game types have been flipped
+        if (setTypes.length > 1) {
+            this.setUnflippedStonesInvalid();
             return;
         }
 
-        // the stones are valid - remove them from the board
-        if (setIds.length === 1 && this.unflippedStones.length === stone.setSize) {
-            const stonesToUpdate: Stone[] = produce(this.unflippedStones, draft => {
-                draft.map((d) => {
-                    d.disabled = true;
-                    d.found = true;
-                    d.state = StoneState.found;
-                });
-            });
-            this.unflippedStones = [];
-            this.disableStones = false;
-            setTimeout(() => {
-                this.updateStones(stonesToUpdate);
-                this.validateGame();
-            }, 400);
+        if (stone.setType === GameType.image && !ImageGame.isValid(this.unflippedStones)) {
+            this.setUnflippedStonesInvalid();
+            return;
+        } else if (stone.setType === GameType.number && !NumberGame.isValid(this.unflippedStones)) {
+            this.setUnflippedStonesInvalid();
+            return;
         }
 
+        this.setUnflippedStonesValid();
         this.validateGame();
+    }
+
+    private setUnflippedStonesValid(): void {
+        const stonesToUpdate: Stone[] = produce(this.unflippedStones, draft => {
+            draft.map((d) => {
+                d.disabled = true;
+                d.found = true;
+                d.state = StoneAnimationState.found;
+            });
+        });
+        this.unflippedStones = [];
+        this.disableStones = false;
+        setTimeout(() => {
+            this.updateStones(stonesToUpdate);
+            this.validateGame();
+        }, 400);
+    }
+
+
+    private setUnflippedStonesInvalid(): void {
+        const stonesToUpdate: Stone[] = produce(this.unflippedStones, draft => {
+            draft.map((d) => {
+                d.flipped = true;
+                d.state = StoneAnimationState.flipped;
+            });
+        });
+        this.unflippedStones = [];
+        setTimeout(() => {
+            this.updateStones(stonesToUpdate);
+            this.disableStones = false;
+        }, 400);
     }
 
     private updateStones(stones: Stone[]) {
@@ -230,7 +247,7 @@ export class GamePage extends DestroyableComponent {
     }
 
     getHighscore(): Observable<Highscore[]> {
-        return this.firebaseService.getHighscore(this.game, true, 10).pipe(take(1));
+        return this.firebaseService.getHighscore(this.game, true, 10);
     }
 
     updateHighscore(milliseconds: number): Promise<Highscore> {

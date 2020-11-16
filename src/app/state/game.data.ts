@@ -1,6 +1,6 @@
 import {Game, GameMode, GameType} from './game.models';
 
-const ZERLEGUNG_20 = [[0, 20], [1, 19], [2, 18], [3, 17], [4, 16], [5, 15], [6, 14], [7, 13], [8, 12], [9, 11], [10, 10]];
+export const ZERLEGUNG_20 = 'ZERLEGUNG_20';
 
 export const GAME_MODES: GameMode[] = [
     {
@@ -19,88 +19,121 @@ export const GAME_MODES: GameMode[] = [
 
 export const GAMES: Game[] = [
     {
-        id: 'easy',
-        label: 'Too easy ...',
+        id: 'image_double_easy',
+        label: 'image_double_easy',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
-                composition: [2, 2],
             }
         },
-        rows: [2, 2]
+        elementsPerSet: 2,
+        numberOfSets: 6,
+        rows: [3, 3, 3, 3]
     },
     {
-        id: 'normal',
-        label: 'normal',
+        id: 'image_double_normal',
+        label: 'image_double_normal',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
-                composition: [2, 2, 2, 2, 2, 2, 2, 2]
             }
         },
+        elementsPerSet: 2,
+        numberOfSets: 8,
         rows: [4, 4, 4, 4]
     },
     {
-        id: 'hard',
-        label: 'hard',
+        id: 'image_double_hard',
+        label: 'image_double_hard',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
-                composition: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
             }
         },
+        elementsPerSet: 2,
+        numberOfSets: 10,
         rows: [4, 4, 4, 4, 4]
     },
     {
-        id: 'insanse',
-        label: 'insanse',
+        id: 'image_tripple_easy',
+        label: 'image_tripple_easy',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
-                composition: [3, 3, 3, 3, 3]
             }
         },
+        elementsPerSet: 3,
+        numberOfSets: 5,
         rows: [3, 3, 3, 3, 3]
     },
     {
-        id: 'wtf',
-        label: 'wtf',
+        id: 'image_tripple_normal',
+        label: 'image_tripple_normal',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
-                composition: [3, 3, 3, 3, 3, 3]
             }
         },
+        elementsPerSet: 3,
+        numberOfSets: 6,
         rows: [3, 4, 4, 4, 3]
     },
     {
-        id: 'god',
-        label: 'god',
+        id: 'image_tripple_hard',
+        label: 'image_tripple_hard',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
             images: {
                 source: 'assets/icons.json',
-                composition: [4, 4, 4, 4, 4]
             }
         },
+        elementsPerSet: 3,
+        numberOfSets: 7,
+        rows: [4, 4, 5, 4, 4]
+    },
+    {
+        id: 'image_quadruple_easy',
+        label: 'image_quadruple_easy',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
+        source: {
+            images: {
+                source: 'assets/icons.json',
+            }
+        },
+        elementsPerSet: 4,
+        numberOfSets: 4,
+        rows: [4, 4, 4, 4]
+    },
+    {
+        id: 'image_quadruple_normal',
+        label: 'image_quadruple_normal',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
+        source: {
+            images: {
+                source: 'assets/icons.json',
+            }
+        },
+        elementsPerSet: 4,
+        numberOfSets: 5,
         rows: [4, 4, 4, 4, 4]
     },
     {
-        id: 'easy',
-        label: 'number Too easy ...',
-        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.number),
+        id: 'image_quadruple_hard',
+        label: 'image_quadruple_hard',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
         source: {
-            numbers: {
-                source: ZERLEGUNG_20,
-                composition: [2, 2, 2, 2, 2, 2]
+            images: {
+                source: 'assets/icons.json',
             }
         },
-        rows: [3, 3, 3, 3]
+        elementsPerSet: 4,
+        numberOfSets: 7,
+        rows: [5, 6, 6, 6, 5]
     },
     {
         id: 'easy',
@@ -109,11 +142,25 @@ export const GAMES: Game[] = [
         source: {
             numbers: {
                 source: ZERLEGUNG_20,
-                composition: [2, 2, 2, 2, 2, 2, 2, 2]
             }
         },
+        elementsPerSet: 2,
+        numberOfSets: 6,
         rows: [3, 3, 3, 3]
-    }
+    },
+    {
+        id: 'medium',
+        label: 'number Zerlegung 3',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.number),
+        source: {
+            numbers: {
+                source: ZERLEGUNG_20,
+            }
+        },
+        elementsPerSet: 3,
+        numberOfSets: 4,
+        rows: [3, 3, 3, 3]
+    },
 ];
 
 

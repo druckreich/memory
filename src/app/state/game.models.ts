@@ -5,7 +5,7 @@ export enum GameType {
     number = 'number'
 }
 
-export enum StoneState {
+export enum StoneAnimationState {
     flipped = 'flipped',
     unflipped = 'unflipped',
     found = 'found'
@@ -18,14 +18,34 @@ export enum StoneType {
 
 
 export interface Stone {
+
+    // unique id for this stone
     id: string;
-    setId: string;
+
+    // how many items are in this set
     setSize: number;
+
+    // what kind of set does this stone belong to
     setType: GameType;
-    source: string;
-    state?: StoneState;
+
+    // the value that is shown on a stone can be a value or a link
+    value: string;
+
+    // key to unlock this set - used to validate the stone with other stones
+    // image need the same key
+    // number need the sum be the key
+    key: string;
+
+    // state of the stone - used for the runtime game animation
+    state?: StoneAnimationState;
+
+    // can not be tabbed
     disabled?: boolean;
+
+    // is flipped
     flipped?: boolean;
+
+    // is found
     found?: boolean;
 }
 
@@ -68,6 +88,10 @@ export interface Game {
      */
     source: DataSource;
 
+    elementsPerSet: number;
+
+    numberOfSets: number;
+
     /**
      * Defines the matrix for the memory game
      */
@@ -81,7 +105,6 @@ export interface DataSource {
 
 export interface DataSourceComposition {
     source: any;
-    composition: number[];
 }
 
 export interface Highscore {

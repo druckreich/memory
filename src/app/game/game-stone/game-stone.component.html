@@ -4,8 +4,8 @@
          (@flip.done)="onAnimationEvent($event)"
          class="flipper">
         <div class="sides front">
-            <div class="image" *ngIf="stone.setType === 'image'" [ngStyle]="{'background-image': 'url('+stone.source+')'}"></div>
-            <span class="mat-body number" *ngIf="stone.setType === 'number'">{{stone.source}}</span>
+            <div class="image" *ngIf="stone.setType === 'image'" [ngStyle]="{'background-image': 'url('+stone.value+')'}"></div>
+            <span class="mat-body number" *ngIf="stone.setType === 'number'">{{stone.value}}</span>
         </div>
         <div class="sides back">
         </div>
