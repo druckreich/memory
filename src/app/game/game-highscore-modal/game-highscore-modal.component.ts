@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {GameMode, Highscore} from '@state/game.models';
+import {Game, Highscore} from '@state/game.models';
 import {Observable} from 'rxjs';
 import {ModalController} from '@ionic/angular';
+import {FirebaseService} from '@state/firebase.service';
 
 @Component({
     selector: 'memo-game-highscore-modal',
@@ -12,22 +13,23 @@ import {ModalController} from '@ionic/angular';
 export class GameHighscoreModalComponent implements OnInit, OnChanges {
 
     @Input()
-    game: GameMode;
+    game: Game;
 
     @Input()
-    highscore$: Observable<Highscore[]>;
+    timeForThisGame: number;
 
-    @Input()
-    localHighscore$: Promise<Highscore>;
+    public remoteHighscore$: Observable<Highscore[]>;
+    public localHighscore$: Observable<Highscore> = this.firebaseService.highscore$;
 
-    @Input()
-    showedAfterGame: boolean;
-
-    constructor(public modalController: ModalController) {
-
+    constructor(public firebaseService: FirebaseService,
+                public modalController: ModalController) {
     }
 
     ngOnInit() {
+        this.remoteHighscore$ = this.firebaseService.getHighscore(this.game, true, 10);
+        if (this.timeForThisGame) {
+            this.firebaseService.setHighscore(this.game, this.timeForThisGame);
+        }
     }
 
     ngOnChanges(changes: SimpleChanges): void {

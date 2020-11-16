@@ -47,7 +47,6 @@ export class GamePage extends DestroyableComponent {
         super();
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
         this.game = this.gameFacade.getGameById(gameModeId);
-
         this.gameStats = {completed: 0, started: 0, moves: 0};
     }
 
@@ -59,7 +58,7 @@ export class GamePage extends DestroyableComponent {
         this.firebaseService.getUserStats(this.game)
             .subscribe((gs: GameStats) => {
                 if (gs) {
-                    this.firebaseService.setUserStats(this.game, {completed: 0, started: 0, moves: 0});
+                    this.firebaseService.setUserStats(this.game, this.gameStats);
                 }
                 this.onPageStartUp();
             });
@@ -67,15 +66,14 @@ export class GamePage extends DestroyableComponent {
 
     onPageStartUp() {
         const props: HighscoreModalProps = {
-            game: this.game.gameMode,
-            showedAfterGame: false,
-            highscore$: this.getHighscore(),
-            localHighscore$: null
+            game: this.game,
+            timeForThisGame: this.milliseconds
         };
         this.showHighscoreModal(props);
     }
 
     async showHighscoreModal(props: HighscoreModalProps) {
+        console.log('showHighscoreModal');
         const modal = await this.modalController.create({
             component: GameHighscoreModalComponent,
             cssClass: 'highscore',
@@ -119,10 +117,8 @@ export class GamePage extends DestroyableComponent {
         this.updateGameStats(this.gameStats);
 
         this.showHighscoreModal({
-            game: this.game.gameMode,
-            showedAfterGame: true,
-            highscore$: this.getHighscore(),
-            localHighscore$: this.updateHighscore(this.milliseconds)
+            game: this.game,
+            timeForThisGame: this.milliseconds
         });
     }
 
@@ -135,6 +131,7 @@ export class GamePage extends DestroyableComponent {
         // -> start the timer
         if (this.timerStatus !== GAME_TIMER_STATUS.START) {
             this.timerStatus = GAME_TIMER_STATUS.START;
+            this.milliseconds = 0;
             this.gameStats.started++;
         }
         this.unflippedStones = produce(this.unflippedStones, draft => {
@@ -244,14 +241,6 @@ export class GamePage extends DestroyableComponent {
             .reduce((total, currentValue, currentIndex, array) => {
                 return total + currentValue;
             }, 0) + ci;
-    }
-
-    getHighscore(): Observable<Highscore[]> {
-        return this.firebaseService.getHighscore(this.game, true, 10);
-    }
-
-    updateHighscore(milliseconds: number): Promise<Highscore> {
-        return this.firebaseService.setHighscore(this.game, milliseconds);
     }
 
     updateGameStats(stats: GameStats): Observable<GameStats> {

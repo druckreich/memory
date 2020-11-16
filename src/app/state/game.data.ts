@@ -19,6 +19,19 @@ export const GAME_MODES: GameMode[] = [
 
 export const GAMES: Game[] = [
     {
+        id: 'image_double_debug',
+        label: 'image_double_debug',
+        gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),
+        source: {
+            images: {
+                source: 'assets/icons.json',
+            }
+        },
+        elementsPerSet: 2,
+        numberOfSets: 2,
+        rows: [2, 2]
+    },
+    {
         id: 'image_double_easy',
         label: 'image_double_easy',
         gameMode: GAME_MODES.find((gm: GameMode) => gm.id === GameType.image),

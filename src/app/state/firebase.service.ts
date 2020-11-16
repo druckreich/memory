@@ -1,8 +1,8 @@
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Injectable} from '@angular/core';
 import {Game, GameStats, Highscore, User} from '@state/game.models';
-import {map, take} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {map, observeOn, take} from 'rxjs/operators';
+import {Observable, of, Subject} from 'rxjs';
 import {Store} from '@ngxs/store';
 import {GameState} from '@state/game.state';
 import {GameFacade} from '@state/game.facade';
@@ -13,6 +13,9 @@ import {GameFacade} from '@state/game.facade';
 export class FirebaseService {
 
     private readonly user: User = this.store.selectSnapshot(GameState.user);
+
+    private readonly highscoreSubject: Subject<Highscore> = new Subject<Highscore>();
+    public readonly highscore$: Observable<Highscore> = this.highscoreSubject.asObservable();
 
     constructor(public store: Store,
                 public gameFacade: GameFacade,
@@ -43,11 +46,13 @@ export class FirebaseService {
     }
 
     public getHighscore(game: Game, sorted: boolean = false, limit: number = null) {
-        let highscores: Observable<Highscore[]> = this.firestore.doc<Highscore>('game/' + this.gameFacade.gameToId(game)).collection('highscore').get()
+        let highscores: Observable<Highscore[]> = this.firestore
+            .doc<Highscore>('game/image_double_debug')
+            .collection('highscore')
+            .get()
             .pipe(
                 take(1),
-                map(d => d.docs.map((r) => ({id: r.id, ...r.data() as Highscore}))
-                )
+                map(d => d.docs.map((r) => ({id: r.id, ...r.data() as Highscore})))
             );
 
         if (sorted) {
@@ -66,11 +71,16 @@ export class FirebaseService {
 
     public setHighscore(game: Game, milliseconds: number): Promise<Highscore> {
         const highscore: Highscore = {username: this.user.username, score: milliseconds};
-        return this.firestore.doc<Highscore>('game/' + `${game.gameMode.id}_${game.id}`).collection('highscore').add(highscore)
+        return this.firestore
+            .doc<Highscore>('game/' + game.id)
+            .collection('highscore')
+            .add(highscore)
             .then((data => {
+                    this.highscoreSubject.next({...highscore, id: data.id});
                     return {...highscore, id: data.id};
                 })
             );
+
     }
 
     public getUserStats(game: Game): Observable<GameStats> {

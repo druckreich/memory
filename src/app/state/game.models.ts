@@ -126,8 +126,6 @@ export interface User {
 }
 
 export interface HighscoreModalProps {
-    game: GameMode;
-    localHighscore$?: Promise<Highscore>;
-    highscore$?: Observable<Highscore[]>;
-    showedAfterGame: boolean;
+    game: Game;
+    timeForThisGame: number;
 }
