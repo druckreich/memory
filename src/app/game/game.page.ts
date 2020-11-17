@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Game, GameStats, GameType, Highscore, HighscoreModalProps, Stone, StoneAnimationState} from '@state/game.models';
+import {Game, GameType, HighscoreModalProps, Stone, StoneAnimationState} from '@state/game.models';
 import {GameFacade} from '@state/game.facade';
 import {GAME_TIMER_STATUS} from './game-timer/game-timer.component';
 import {Store} from '@ngxs/store';
@@ -8,9 +8,8 @@ import {ModalController} from '@ionic/angular';
 import {GameHighscoreModalComponent} from '@app/game/game-highscore-modal/game-highscore-modal.component';
 import {FirebaseService} from '@state/firebase.service';
 import {produce} from 'immer';
-import {Observable} from 'rxjs';
 import {DestroyableComponent} from '@app/shared/destroyable/destroyable.component';
-import {take, takeUntil} from 'rxjs/operators';
+import {takeUntil} from 'rxjs/operators';
 import {ImageGame} from '@app/shared/util/image.game';
 import {NumberGame} from '@app/shared/util/number.game';
 
@@ -37,7 +36,8 @@ export class GamePage extends DestroyableComponent {
     timerStatus: GAME_TIMER_STATUS = GAME_TIMER_STATUS.STOP;
     milliseconds: number;
 
-    public gameStats: GameStats;
+    moves = 0;
+    errors = 0;
 
     constructor(public activatedRoute: ActivatedRoute,
                 public store: Store,
@@ -47,37 +47,25 @@ export class GamePage extends DestroyableComponent {
         super();
         const gameModeId: string = this.activatedRoute.snapshot.params.id;
         this.game = this.gameFacade.getGameById(gameModeId);
-        this.gameStats = {completed: 0, started: 0, moves: 0};
     }
 
     ionViewWillEnter() {
-        this.loadGameStats();
-    }
-
-    loadGameStats(): void {
-        this.firebaseService.getUserStats(this.game)
-            .subscribe((gs: GameStats) => {
-                if (gs) {
-                    this.firebaseService.setUserStats(this.game, this.gameStats);
-                }
-                this.onPageStartUp();
-            });
+        this.onPageStartUp();
     }
 
     onPageStartUp() {
-        const props: HighscoreModalProps = {
-            game: this.game,
-            timeForThisGame: this.milliseconds
-        };
-        this.showHighscoreModal(props);
+        this.showHighscoreModal();
     }
 
-    async showHighscoreModal(props: HighscoreModalProps) {
-        console.log('showHighscoreModal');
+    async showHighscoreModal() {
         const modal = await this.modalController.create({
             component: GameHighscoreModalComponent,
             cssClass: 'highscore',
-            componentProps: props
+            componentProps: {
+                game: this.game,
+                moves: this.moves,
+                time: this.milliseconds
+            } as HighscoreModalProps
         });
         modal.onDidDismiss().then((data) => {
             if (data.data === 'start') {
@@ -87,7 +75,7 @@ export class GamePage extends DestroyableComponent {
                 this.gameFacade.navigateToMenu();
             }
         });
-        return await modal.present();
+        return modal.present();
     }
 
     private prepareGame(): void {
@@ -105,21 +93,18 @@ export class GamePage extends DestroyableComponent {
         this.showBackdrop = false;
         this.disableStones = false;
         this.showCountdown = false;
+        this.moves = 0;
+        this.timerStatus = GAME_TIMER_STATUS.RESET;
     }
 
     private stopGame(): void {
+        this.showStones = false;
         this.showBackdrop = true;
         this.disableStones = true;
         this.showCountdown = false;
         this.timerStatus = GAME_TIMER_STATUS.STOP;
 
-        this.gameStats.completed++;
-        this.updateGameStats(this.gameStats);
-
-        this.showHighscoreModal({
-            game: this.game,
-            timeForThisGame: this.milliseconds
-        });
+        this.showHighscoreModal();
     }
 
     private onTick(ms: number) {
@@ -132,13 +117,12 @@ export class GamePage extends DestroyableComponent {
         if (this.timerStatus !== GAME_TIMER_STATUS.START) {
             this.timerStatus = GAME_TIMER_STATUS.START;
             this.milliseconds = 0;
-            this.gameStats.started++;
         }
         this.unflippedStones = produce(this.unflippedStones, draft => {
             draft.push(stone);
         });
         if (this.unflippedStones.length === this.unflippedStones[0].setSize) {
-            this.gameStats.moves++;
+            this.moves++;
             this.disableStones = true;
         }
     }
@@ -241,9 +225,5 @@ export class GamePage extends DestroyableComponent {
             .reduce((total, currentValue, currentIndex, array) => {
                 return total + currentValue;
             }, 0) + ci;
-    }
-
-    updateGameStats(stats: GameStats): Observable<GameStats> {
-        return this.firebaseService.updateGameStats(this.game, stats);
     }
 }

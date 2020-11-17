@@ -57,7 +57,7 @@ export class FirebaseService {
 
         if (sorted) {
             highscores = highscores.pipe(
-                map((h: Highscore[]) => h.sort((a: Highscore, b: Highscore) => a.score - b.score))
+                map((h: Highscore[]) => h.sort((a: Highscore, b: Highscore) => a.time - b.time))
             );
         }
 
@@ -69,8 +69,8 @@ export class FirebaseService {
         return highscores;
     }
 
-    public setHighscore(game: Game, milliseconds: number): Promise<Highscore> {
-        const highscore: Highscore = {username: this.user.username, score: milliseconds};
+    public setHighscore(game: Game, time: number, moves: number): Promise<Highscore> {
+        const highscore: Highscore = {username: this.user.username, time, moves};
         return this.firestore
             .doc<Highscore>('game/' + game.id)
             .collection('highscore')
@@ -94,14 +94,14 @@ export class FirebaseService {
             .pipe(take(1));
     }
 
-    public setUserStats(game: Game, stats: GameStats): any {
+    public setUserStats(game: Game, stats: GameStats): Promise<void>  {
         return this.firestore.doc<GameStats>('user/' + this.user.username)
             .collection('stats')
             .doc(this.gameFacade.gameToId(game))
             .set(stats);
     }
 
-    public updateGameStats(game: Game, stats: GameStats): any {
+    public updateGameStats(game: Game, stats: GameStats): Promise<void> {
         return this.firestore.doc<GameStats>('user/' + this.user.username)
             .collection('stats')
             .doc(this.gameFacade.gameToId(game))

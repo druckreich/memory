@@ -55,8 +55,6 @@ export class GameFacade {
     }
 
     public getGameById(gameId: string) {
-        console.log(gameId);
-        console.log(this.games.find((game: Game) => game.id === gameId));
         return this.games.find((game: Game) => game.id === gameId);
     }
 
@@ -70,9 +68,7 @@ export class GameFacade {
                 stones = this.numberGame.createStones(game);
                 break;
         }
-        return stones.pipe(
-            tap((s) => console.log(s))
-        );
+        return stones
     }
 
 

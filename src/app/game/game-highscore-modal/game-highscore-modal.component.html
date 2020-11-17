@@ -1,37 +1,35 @@
 <ion-content class="ion-padding-horizontal">
     <h3>{{game.label | uppercase}}</h3>
-
     <div *ngIf="{
   remote: remoteHighscore$ | async,
   local: localHighscore$ | async
 } as highscore">
-
-
         <ion-grid>
             <ion-row>
                 <ion-col size="2" class="ion-text-right ion-text-nowrap">RANK</ion-col>
                 <ion-col size="4" class="ion-text-right ion-text-nowrap">TIME</ion-col>
-                <ion-col size="5" class="ion-text-right ion-text-nowrap">NAME</ion-col>
+                <ion-col size="2" class="ion-text-right ion-text-nowrap">MOVES</ion-col>
+                <ion-col size="4" class="ion-text-right ion-text-nowrap">NAME</ion-col>
             </ion-row>
-            <ion-row>
-
-            </ion-row>
-            <ion-row *ngFor="let h of highscore.remote; let i = index"
-                     [ngClass]="h.id  === highscore?.local?.id ? 'success' : ''">
+            <ion-row *ngFor="let remoteHighscore of highscore.remote; let i = index"
+                     [ngClass]="remoteHighscore.id  === highscore?.local?.id ? 'success' : ''">
                 <ion-col size="2" class="ion-text-right ion-text-nowrap">
                     <ion-text>{{i + 1}}.
                     </ion-text>
                 </ion-col>
                 <ion-col size="4" class="ion-text-right">
-                    <ion-text>{{h.score | timer}}</ion-text>
+                    <ion-text>{{remoteHighscore.time | timer}}</ion-text>
                 </ion-col>
-                <ion-col size="5" class="ion-text-right">
-                    <ion-text>{{h.username}}</ion-text>
+                <ion-col size="2" class="ion-text-right">
+                    <ion-text>{{remoteHighscore.moves}}</ion-text>
+                </ion-col>
+                <ion-col size="4" class="ion-text-right">
+                    <ion-text>{{remoteHighscore.username}}</ion-text>
                 </ion-col>
             </ion-row>
         </ion-grid>
-        <div *ngIf="highscore.local">
-            <p>
+        <div *ngIf="(isLocalScoreInTopTen$ | async) === true">
+            <p class="ion-text-center">
                 <ion-text><h3>Well done!!</h3></ion-text>
                 You made it to the
                 <ion-text color="success">TOP 10!</ion-text>

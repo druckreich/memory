@@ -110,13 +110,13 @@ export interface DataSourceComposition {
 export interface Highscore {
     id?: string;
     username?: string;
-    score: number;
+    time: number;
+    moves: number;
 }
 
 export interface GameStats {
     started?: number;
     completed?: number;
-    moves?: number;
 }
 
 export interface User {
@@ -127,5 +127,6 @@ export interface User {
 
 export interface HighscoreModalProps {
     game: Game;
-    timeForThisGame: number;
+    time: number;
+    moves: number;
 }
