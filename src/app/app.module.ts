@@ -8,7 +8,7 @@ import {StatusBar} from '@ionic-native/status-bar/ngx';
 
 import {AppComponent} from './app.component';
 import {NgxsModule} from '@ngxs/store';
-import {GAME_STATE_TOKEN, GameState, GameStateModel} from '@state/game.state';
+import {GAME_STATE_TOKEN, GameState} from '@state/game.state';
 import {environment} from '@environment/environment';
 import {NgxsRouterPluginModule} from '@ngxs/router-plugin';
 import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
@@ -19,22 +19,34 @@ import {AngularFireModule} from '@angular/fire';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireDatabaseModule} from '@angular/fire/database';
 import {NgxsDispatchPluginModule} from '@ngxs-labs/dispatch-decorator';
-import {LogInModalComponent} from '@app/shared/log-in-modal/log-in-modal.component';
 import {APP_ROUTES} from '@app/app.routes';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {NgxsSelectSnapshotModule} from '@ngxs-labs/select-snapshot';
-import {CommonModule} from '@angular/common';
-import {SharedModule} from '@app/shared.module';
+import {firebase, firebaseui, FirebaseUIModule} from 'firebaseui-angular';
+import {AngularFireAuthModule} from '@angular/fire/auth';
+import '@firebase/auth';
 
+const firebaseUiAuthConfig: firebaseui.auth.Config = {
+    signInFlow: 'popup',
+    signInOptions: [
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        {
+            requireDisplayName: false,
+            provider: firebase.auth.EmailAuthProvider.PROVIDER_ID
+        },
+        firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
+    ],
+    tosUrl: '<your-tos-link>',
+    privacyPolicyUrl: '<your-privacyPolicyUrl-link>',
+    credentialHelper: firebaseui.auth.CredentialHelper.ACCOUNT_CHOOSER_COM
+};
 
 @NgModule({
     declarations: [
-        AppComponent,
-        LogInModalComponent
+        AppComponent
+
     ],
-    entryComponents: [
-        LogInModalComponent
-    ],
+    entryComponents: [],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
@@ -43,6 +55,8 @@ import {SharedModule} from '@app/shared.module';
 
         // firebase integration
         AngularFireModule.initializeApp(environment.firebase),
+        AngularFireAuthModule,
+        FirebaseUIModule.forRoot(firebaseUiAuthConfig),
         AngularFireDatabaseModule,
 
         // ngxs integration

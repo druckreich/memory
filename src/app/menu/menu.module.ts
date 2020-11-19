@@ -5,6 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {RouterModule, Routes} from '@angular/router';
 import {MenuPage} from '@app/menu/menu.page';
 import {ModeComponent} from './mode/mode.component';
+import {FirebaseUIModule} from 'firebaseui-angular';
 
 const routes: Routes = [
     {
@@ -30,5 +31,5 @@ const routes: Routes = [
     ],
     entryComponents: []
 })
-export class HomePageModule {
+export class MenuPageModule {
 }

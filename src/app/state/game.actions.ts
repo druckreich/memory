@@ -17,13 +17,6 @@ export class LoadGamesSuccess {
     }
 }
 
-export class SetUser {
-    static readonly type = '[Main] Set Username';
-
-    constructor(public user: User) {
-    }
-}
-
 export class SetHighscore {
     static readonly type = '[Main] Set Highscore';
 

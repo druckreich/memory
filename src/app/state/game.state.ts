@@ -3,7 +3,7 @@ import {Action, Selector, State, StateContext, StateToken} from '@ngxs/store';
 
 
 import {Game, GameMode, User} from './game.models';
-import {LoadGameModesSuccess, LoadGamesSuccess, SetUser} from '@state/game.actions';
+import {LoadGameModesSuccess, LoadGamesSuccess} from '@state/game.actions';
 import {GAME_MODES, GAMES} from './game.data';
 
 export class GameStateModel {
@@ -46,14 +46,6 @@ export class GameState {
     ngxsOnInit(ctx: StateContext<GameStateModel>) {
         ctx.dispatch(new LoadGameModesSuccess(GAME_MODES));
         ctx.dispatch(new LoadGamesSuccess(GAMES));
-    }
-
-    @Action(SetUser)
-    setUser(ctx: StateContext<GameStateModel>, action: SetUser) {
-        const state = ctx.getState();
-        ctx.patchState({
-            user: action.user
-        });
     }
 
     @Action(LoadGameModesSuccess)

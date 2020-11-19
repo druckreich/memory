@@ -1,10 +1,6 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {TimerPipe} from '@app/timer.pipe';
-import {TabDirective} from '@app/tab.directive';
-import {ImageGame} from '@app/shared/util/image.game';
-import {NumberGame} from '@app/shared/util/number.game';
-
+import {TimerPipe} from '@app/shared/timer.pipe';
+import {TabDirective} from '@app/shared/tab.directive';
 
 @NgModule({
     declarations: [
