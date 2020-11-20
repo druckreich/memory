@@ -1,16 +1,16 @@
 import {Routes} from '@angular/router';
-import {IsLoggedInUserGuard} from '@app/shared/is-logged-in-user.guard';
+import {IsAuthenticatedGuard} from '@app/shared/is-authenticated-guard.service';
 
 export const APP_ROUTES: Routes = [
     {
         path: 'menu',
         loadChildren: () => import('./menu/menu.module').then(m => m.MenuPageModule),
-        canActivate: [IsLoggedInUserGuard]
+        canActivate: [IsAuthenticatedGuard]
     },
     {
         path: 'game/:id',
         loadChildren: () => import('./game/game.module').then(m => m.GamePageModule),
-        canActivate: [IsLoggedInUserGuard]
+        canActivate: [IsAuthenticatedGuard]
     },
     {
         path: 'auth',

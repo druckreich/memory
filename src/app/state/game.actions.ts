@@ -1,7 +1,4 @@
-
-import {StateContext} from '@ngxs/store';
-import {GameStateModel} from '@state/game.state';
-import {Game, GameMode, Highscore, User} from '@state/game.models';
+import {Game, GameMode, Highscore} from '@state/game.models';
 
 export class LoadGameModesSuccess {
     static readonly type = 'loadGameModeSuccess';
@@ -14,6 +11,13 @@ export class LoadGamesSuccess {
     static readonly type = 'loadGamesSuccess';
 
     constructor(public games: Game[]) {
+    }
+}
+
+export class SetUsername {
+    static readonly type = '[Main] Set Username';
+
+    constructor(public username: string) {
     }
 }
 

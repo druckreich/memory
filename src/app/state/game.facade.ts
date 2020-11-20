@@ -8,6 +8,7 @@ import {SelectSnapshot} from '@ngxs-labs/select-snapshot';
 import {GameState} from '@state/game.state';
 import {NumberGame} from '@app/shared/util/number.game';
 import {ImageGame} from '@app/shared/util/image.game';
+import {FirebaseService} from '@state/firebase.service';
 
 @Injectable({
     providedIn: 'root'
@@ -23,6 +24,10 @@ export class GameFacade {
     constructor(public store: Store,
                 public numberGame: NumberGame,
                 public imageGame: ImageGame) {
+    }
+
+    public navigateToAuth(): void {
+        this.store.dispatch(new Navigate(['auth']));
     }
 
     public navigateToMenu() {

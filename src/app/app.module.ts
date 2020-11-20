@@ -41,6 +41,8 @@ const firebaseUiAuthConfig: firebaseui.auth.Config = {
     credentialHelper: firebaseui.auth.CredentialHelper.ACCOUNT_CHOOSER_COM
 };
 
+firebase.initializeApp(environment.firebase);
+
 @NgModule({
     declarations: [
         AppComponent

@@ -2,12 +2,12 @@ import {Injectable} from '@angular/core';
 import {Action, Selector, State, StateContext, StateToken} from '@ngxs/store';
 
 
-import {Game, GameMode, User} from './game.models';
-import {LoadGameModesSuccess, LoadGamesSuccess} from '@state/game.actions';
+import {Game, GameMode} from './game.models';
+import {LoadGameModesSuccess, LoadGamesSuccess, SetUsername} from '@state/game.actions';
 import {GAME_MODES, GAMES} from './game.data';
 
 export class GameStateModel {
-    public user: User;
+    public user: string;
     public gameModes: GameMode[];
     public games: Game[];
 }
@@ -24,11 +24,6 @@ export const GAME_STATE_TOKEN = new StateToken<GameStateModel>('game');
 })
 @Injectable()
 export class GameState {
-
-    @Selector([GAME_STATE_TOKEN])
-    public static user(state: GameStateModel) {
-        return state.user;
-    }
 
     @Selector([GAME_STATE_TOKEN])
     public static gameModes(state: GameStateModel): GameMode[] {

@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FirebaseUISignInFailure, FirebaseUISignInSuccessWithAuthResult} from 'firebaseui-angular';
-import {AuthFacade} from '@state/auth.facade';
+import {GameFacade} from '@state/game.facade';
+import {FirebaseService} from '@state/firebase.service';
 
 @Component({
     selector: 'memo-auth',
@@ -9,24 +10,25 @@ import {AuthFacade} from '@state/auth.facade';
 })
 export class AuthComponent implements OnInit {
 
-    constructor(private authFacade: AuthFacade) {
-        console.log('CHECK');
+    constructor(private gameFacade: GameFacade, private firebaseService: FirebaseService) {
     }
 
     ngOnInit(): void {
     }
 
     successCallback($event: FirebaseUISignInSuccessWithAuthResult) {
-
-        console.log($event);
+        const isNewUser: boolean = $event.authResult.additionalUserInfo.isNewUser;
+        // if is new show modal for user
+        this.firebaseService.setUsername('smarti').then(() => {
+            console.log('IS NEW USER', );
+            this.gameFacade.navigateToMenu();
+        });
 
     }
 
     errorCallback($event: FirebaseUISignInFailure) {
-        console.log($event);
     }
 
     uiShownCallback() {
-        console.log('uiShownCallback');
     }
 }

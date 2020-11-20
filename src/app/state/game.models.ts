@@ -119,12 +119,6 @@ export interface GameStats {
     completed?: number;
 }
 
-export interface User {
-    id?: string;
-    username: string;
-    password: string;
-}
-
 export interface HighscoreModalProps {
     game: Game;
     time: number;

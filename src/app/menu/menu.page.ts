@@ -4,6 +4,7 @@ import {GameFacade} from '@state/game.facade';
 import {Select} from '@ngxs/store';
 import {GameState} from '@state/game.state';
 import {Observable} from 'rxjs';
+import {FirebaseService} from '@state/firebase.service';
 
 @Component({
     selector: 'app-menu',
@@ -18,7 +19,8 @@ export class MenuPage {
 
     rows: number[] = [1, 2, 3, 4];
 
-    constructor(public gameFacade: GameFacade) {
+    constructor(public gameFacade: GameFacade, private firebaseService: FirebaseService) {
+        this.firebaseService.setUsername('smarti');
     }
 
     selectGameMode(gameMode: GameMode): void {

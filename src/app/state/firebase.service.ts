@@ -1,18 +1,16 @@
 import {AngularFirestore} from '@angular/fire/firestore';
 import {Injectable} from '@angular/core';
-import {Game, GameStats, Highscore, User} from '@state/game.models';
-import {map, observeOn, take} from 'rxjs/operators';
-import {Observable, of, Subject} from 'rxjs';
+import {Game, Highscore} from '@state/game.models';
+import {map, take} from 'rxjs/operators';
+import {Observable, Subject} from 'rxjs';
 import {Store} from '@ngxs/store';
-import {GameState} from '@state/game.state';
 import {GameFacade} from '@state/game.facade';
+import {firebase} from 'firebaseui-angular';
 
 @Injectable({
     providedIn: 'root',
 })
 export class FirebaseService {
-
-    private readonly user: User = this.store.selectSnapshot(GameState.user);
 
     private readonly highscoreSubject: Subject<Highscore> = new Subject<Highscore>();
     public readonly highscore$: Observable<Highscore> = this.highscoreSubject.asObservable();
@@ -22,32 +20,29 @@ export class FirebaseService {
                 public firestore: AngularFirestore) {
     }
 
-    public userExists(username: string): Observable<User> {
-        return this.firestore.collection('user').doc(username).get().pipe(
-            take(1),
-            map(d => d.data() as User)
-        );
+    public setUsername(username: string): Promise<any>  {
+        const user = firebase.auth().currentUser;
+        
+        this.existsUsername('xxx').subscribe(_ => console.log(_));
+
+
+        return this.firestore.doc<any>('user/' + user.uid).set({username});
     }
 
-    public getUser(user: User) {
-        return this.firestore.doc('user/' + user.username).get()
+    public existsUsername(username: string): Observable<any> {
+        return this.firestore
+            .collection('user', ref => ref.where('username', '==', username))
+            .get()
             .pipe(
                 take(1),
-                map(action => {
-                    const data = action.data() as User;
-                    const id = action.id;
-                    return {id, ...data} as User;
-                })
+                map(d => d.docs.map((r) => r.data()))
             );
     }
 
-    public setUser(user: User) {
-        return this.firestore.collection('user').doc(user.username).set(user);
-    }
 
     public getHighscore(game: Game, sorted: boolean = false, limit: number = null) {
         let highscores: Observable<Highscore[]> = this.firestore
-            .doc<Highscore>('game/image_double_debug')
+            .doc<Highscore>('game/' + game.id)
             .collection('highscore')
             .get()
             .pipe(
@@ -66,11 +61,13 @@ export class FirebaseService {
                 map((h: Highscore[]) => h.slice(0, limit))
             );
         }
+
         return highscores;
     }
 
     public setHighscore(game: Game, time: number, moves: number): Promise<Highscore> {
-        const highscore: Highscore = {username: this.user.username, time, moves};
+        const user = firebase.auth().currentUser;
+        const highscore: Highscore = {username: user.uid, time, moves};
         return this.firestore
             .doc<Highscore>('game/' + game.id)
             .collection('highscore')
@@ -83,6 +80,8 @@ export class FirebaseService {
 
     }
 
+
+    /*
     public getUserStats(game: Game): Observable<GameStats> {
         if (!this.user) {
             return null;
@@ -107,4 +106,5 @@ export class FirebaseService {
             .doc(this.gameFacade.gameToId(game))
             .update(stats);
     }
+    */
 }
