@@ -1,9 +1,6 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {GameMode} from '@state/game.models';
 import {GameFacade} from '@state/game.facade';
-import {Select} from '@ngxs/store';
-import {GameState} from '@state/game.state';
-import {Observable} from 'rxjs';
 import {FirebaseService} from '@state/firebase.service';
 
 @Component({
@@ -14,13 +11,12 @@ import {FirebaseService} from '@state/firebase.service';
 })
 export class MenuPage {
 
-
     public gameModes: GameMode[] = this.gameFacade.gameModes;
 
-    rows: number[] = [1, 2, 3, 4];
-
-    constructor(public gameFacade: GameFacade, private firebaseService: FirebaseService) {
-        this.firebaseService.setUsername('smarti');
+    constructor(public gameFacade: GameFacade) {
+        if(this.gameModes.length === 1) {
+            this.selectGameMode(this.gameModes[0]);
+        }
     }
 
     selectGameMode(gameMode: GameMode): void {

@@ -18,11 +18,15 @@ export class AuthComponent implements OnInit {
 
     successCallback($event: FirebaseUISignInSuccessWithAuthResult) {
         const isNewUser: boolean = $event.authResult.additionalUserInfo.isNewUser;
-        // if is new show modal for user
-        this.firebaseService.setUsername('smarti').then(() => {
-            console.log('IS NEW USER', );
-            this.gameFacade.navigateToMenu();
-        });
+        if(isNewUser) {
+            // new user
+            const username = 'smarti';
+            this.firebaseService.setUsername(username).then(() => {
+                this.gameFacade.navigateToMenu();
+            });
+        } else {
+            // welcome user back!
+        }
 
     }
 

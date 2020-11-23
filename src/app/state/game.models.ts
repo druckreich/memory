@@ -64,6 +64,7 @@ export interface GameMode {
     type: GameType;
     label: string;
     description: string;
+    enabled: boolean;
 }
 
 export interface Game {

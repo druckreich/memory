@@ -7,13 +7,15 @@ export const GAME_MODES: GameMode[] = [
         id: GameType.image,
         type: GameType.image,
         label: 'Images',
-        description: 'Versuche zusammengehörige Bilder zu finden'
+        description: 'Versuche zusammengehörige Bilder zu finden',
+        enabled: true
     },
     {
         id: GameType.number,
         type: GameType.number,
         label: 'Numbers',
-        description: 'Versuche zusammengehörige Zahlen zu finden'
+        description: 'Versuche zusammengehörige Zahlen zu finden',
+        enabled: false
     }
 ];
 

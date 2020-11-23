@@ -27,7 +27,7 @@ export class GameState {
 
     @Selector([GAME_STATE_TOKEN])
     public static gameModes(state: GameStateModel): GameMode[] {
-        return state.gameModes;
+        return state.gameModes.filter((gm: GameMode) => gm.enabled === true);
     }
 
     @Selector([GAME_STATE_TOKEN])

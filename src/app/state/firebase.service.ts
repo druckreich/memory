@@ -22,9 +22,8 @@ export class FirebaseService {
 
     public setUsername(username: string): Promise<any>  {
         const user = firebase.auth().currentUser;
-        
-        this.existsUsername('xxx').subscribe(_ => console.log(_));
 
+        this.existsUsername('xxx').subscribe(_ => console.log(_));
 
         return this.firestore.doc<any>('user/' + user.uid).set({username});
     }
